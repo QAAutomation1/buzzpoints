@@ -1,0 +1,45 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/13/2015
+ * @Comments This automation class will serve the Admin Login use cases
+ */
+package com.fisoc.admin;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.testng.annotations.Test;
+import com.fisoc.admin.helpers.AdminLoginPageTestHelper;
+
+public class AdminLoginPageTest extends BaseClass
+{
+	/**
+	 * Test Case for submitting the Login page depending on the test data passed
+	 * valid email and password should allow the user to
+	 * login in to the application.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */	 
+	@Test(groups = { "regression" ,"functional","Smoke", "AdminSiteRegression"})
+	 public void adminLoginTest() throws InvalidFormatException
+	 {
+		 AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+		 adminLogin.adminPageLoginInitialPage(driver);
+	}
+	
+	@Test( dependsOnMethods = {"adminSiteLoginTest"} ,groups = { "regression" ,"functional","Smoke", "AdminSiteRegression"})
+	
+	public void adminSiteLogoutTest() {
+		
+		boolean adminLogoutStatus;
+		AdminSiteLoginHelper adminLogin = new AdminSiteLoginHelper();
+		driver = DriverManager.getDriver("IE");
+		adminLogin.navigateToAdminSite(driver);
+		adminLogin.loginToAdminSite(driver);
+		adminLogoutStatus = adminLogin.logoutFromAdminSite(driver);
+		Assert.assertEquals(adminLogoutStatus, true, "User couldn`t logged out...");
+		Reporter.log("Admin Site Logout flow : Pass  -- Admin User has been successfully logged out", true);
+		TestCaseCountUtil.updateTestCaseCount(1,"AdminSiteLoginTest."+"adminSiteLogoutTest()");
+		
+	}
+}

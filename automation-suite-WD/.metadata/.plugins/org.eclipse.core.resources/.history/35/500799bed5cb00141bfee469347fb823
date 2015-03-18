@@ -1,0 +1,44 @@
+package com.fisoc.admin;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.DriverManager;
+
+public class BaseClass 
+{ 
+	private static Logger log = Logger.getLogger(BaseClass.class);
+	WebDriver driver;
+	
+	/**
+	 * Test case to load the necessary driver to run
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws Exception 
+	 */
+	@BeforeTest
+	public void launchApplication() throws Exception
+	{
+		log.info("-------Opening the browser--------");
+		driver = DriverManager.getDriverForBrowser(TestConstants.BROWSER_FIREFOX);
+		driver.manage().window().maximize();
+	}
+	
+	/**
+	 * Test case to close the driver 
+	 * Input: No parameter
+	 * Output: Void
+	 */	  
+	@AfterTest(groups = { "teardown" })
+	public void teardown(){
+		log.info("-------Closing the browser--------");
+		//Close opened browser
+		driver.close();
+		//Quit all the opened browsers
+		driver.quit();
+	}
+}

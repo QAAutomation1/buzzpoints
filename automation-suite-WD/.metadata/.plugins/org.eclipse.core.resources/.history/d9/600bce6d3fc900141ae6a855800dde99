@@ -1,0 +1,345 @@
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+public class AdminBrowseAllFinancialInstitutionTestHelper 
+{
+	public static String adminLoginUrl=TestConstants.AdminLoginUrl;
+	public static String gmailUrl=TestConstants.GmailUrl;
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	public static String gmailUserName;
+	public static String gmailPassword;
+	public static String userFinancialInstitutionName;
+	public static String userAccountNumber;
+	public static String userSsnNumber;
+	public static String userName;
+	public static String userConnectedDate;
+	public static String userStatus;
+	public static String userBatchId;
+	public static String signupvalue;
+	public static String ownerName;
+	public static String newEmail;
+	public static String mobileNumber;
+	public static String userNewPassword;
+	public static String resultPerPage;
+	public static String FinancialInstitutionURL;
+	public int rowCount;
+	ExcelLib xllib = new ExcelLib();
+	private static Logger log = Logger.getLogger(AdminBrowseAllFinancialInstitutionTestHelper.class);
+		
+	/**
+	 * Test Case for navigating to admin portal
+	 * Upon correct login data we can successfully login
+	 */
+	public void browseAllFinancialInstitutionInitialPage(WebDriver driver)
+	{
+		try
+		{
+			rowCount= xllib.getRowCount("BrowseFI");
+			for (int i = 1; i <= rowCount; i++) 
+		   	{
+				try
+				{
+					adminLoginEmail=xllib.getExcelData("BrowseFI", i, 0);
+					adminLoginPassword=xllib.getExcelData("BrowseFI", i, 1);
+					userFinancialInstitutionName=xllib.getExcelData("BrowseFI", i, 2);
+					userAccountNumber=xllib.getExcelData("BrowseFI", i, 3);
+					userSsnNumber=xllib.getExcelData("BrowseFI", i, 4);
+					userName=xllib.getExcelData("BrowseFI", i, 5);
+					userConnectedDate=xllib.getExcelData("BrowseFI", i, 6);
+					userStatus=xllib.getExcelData("BrowseFI", i, 7);
+					userBatchId=xllib.getExcelData("BrowseFI", i, 8);
+					signupvalue=xllib.getExcelData("BrowseFI", i, 9);
+					ownerName=xllib.getExcelData("BrowseFI", i, 10);
+					newEmail=xllib.getExcelData("BrowseFI", i, 11);
+					mobileNumber=xllib.getExcelData("BrowseFI", i, 12);
+					gmailUserName=xllib.getExcelData("BrowseFI", i, 13);
+					gmailPassword=xllib.getExcelData("BrowseFI", i, 14);
+					userNewPassword=xllib.getExcelData("BrowseFI", i, 15);
+					FinancialInstitutionURL= xllib.getExcelData("BrowseFI", i, 16);
+					resultPerPage=xllib.getExcelData("BrowseFI", i, 17);
+					
+					
+		   			log.info("----------------------------------------------------");
+		   			log.info("navigating to "+adminLoginUrl+"");
+					driver.get(adminLoginUrl);
+		   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		   			driver.findElement(By.xpath("//input[@name='principal']")).sendKeys(adminLoginEmail);		
+					driver.findElement(By.xpath("//input[@name='password']")).sendKeys(adminLoginPassword);	
+					driver.findElement(By.xpath("//a[@id='signin']")).click();	
+		   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+					driver.findElement(By.id("module_btn_browse_all_fi_accounts")).click();
+					log.info("Successfully logged into admin");
+		   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		   			
+		   			financialInstitutionSearch(driver);
+				}
+				catch(Exception e)
+				{
+					log.info("Admin Loging Failed");
+				}
+		   	}			
+		}
+		catch(Exception e)
+		{
+			log.info("End of Test Data");
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Test Case for searching Financial Institution
+	 * accounts based on the different test data passed
+	 */	
+	public void financialInstitutionSearch(WebDriver driver)
+	{
+		try
+		{	
+			Thread.sleep(3000);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//select[@name='fiidfilter']")).sendKeys(userFinancialInstitutionName);			
+			driver.findElement(By.xpath("//input[@class='form-control']")).sendKeys(userAccountNumber);			
+			driver.findElement(By.xpath("//input[@name='ssnlast4filter']")).sendKeys(userSsnNumber);			
+			driver.findElement(By.xpath("//input[@name='acctnamefilter']")).sendKeys(userName);			
+			driver.findElement(By.xpath("//input[@name='connectedafterfilter']")).sendKeys(userConnectedDate);			
+			driver.findElement(By.xpath("//select[@name='statusfilter']")).sendKeys(userStatus);			
+			driver.findElement(By.xpath("//input[@name='batchidfilter']")).sendKeys(userBatchId);			
+			driver.findElement(By.xpath("//select[@name='accountlimit']")).sendKeys(resultPerPage);
+			driver.findElement(By.xpath("//a[@class='btn btn-primary search']")).click();
+			log.info("Searching for Financial Institution Accounts");
+			Thread.sleep(6000);
+			if(signupvalue.equalsIgnoreCase("Y"))
+			{
+				log.info("Signing Up...");
+				financialInstitutionSignUp(driver);
+			}
+			else
+			{
+				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
+				log.info("Test Case Passed");
+			}
+			
+			
+		}
+		catch(Exception e)
+		{
+			log.info("Error in searching Financial Institution Accounts");
+		}
+	}
+	
+	
+	
+	/**
+	 * Test Case for financial institution signup,
+	 *  upon successful signup a confirmation mail will be sent to gmail
+	 */	
+	public void financialInstitutionSignUp(WebDriver driver)
+	{
+		try
+		{
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//tr[@status='NEW']")).click();
+			Thread.sleep(5000);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//button[@class='btn btn-info']")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			Thread.sleep(5000);
+			driver.findElement(By.xpath("//input[@name='ownerName']")).sendKeys(ownerName);
+			driver.findElement(By.xpath("//input[@name='email']")).sendKeys(newEmail);
+			driver.findElement(By.xpath("//input[@name='mobile']")).sendKeys(mobileNumber);
+			log.info("Setting new values to the account");
+			Thread.sleep(5000);	
+			
+			if(userStatus.equalsIgnoreCase("NEW"))
+			{
+				driver.findElement(By.xpath("//button[@class='btn btn-primary pull-right']")).click();
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				Thread.sleep(5000);
+				Alert alert1= driver.switchTo().alert();
+				alert1.accept();
+				log.info("Signup Successful...");
+				driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+	   			gmailVerificationForPasswordReset(driver);
+			}
+			else
+			{
+				driver.findElement(By.xpath("//button[@class='btn btn-inverse pull-right']")).click();
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				driver.findElement(By.xpath("//button[@class='btn btn-inverse']")).click();
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				log.info("Test Case Failed");
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Error in SignUp");
+		}
+	}
+	
+	
+	/**
+	 * Test Case for logging into gmail
+	 * and to follow the confirmation link passed
+	 * @throws InterruptedException 
+	 */	
+	public void gmailVerificationForPasswordReset(WebDriver driver)
+	{
+		try
+		{
+			driver.get(gmailUrl);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("Email")).sendKeys(gmailUserName);
+			driver.findElement(By.id("Passwd")).sendKeys(gmailPassword);
+			driver.findElement(By.id("signIn")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("/html/body/div[7]/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[2]/div[1]/div[1]/div/div[1]/div[4]/div[1]/div/table/tbody/tr[1]/td[4]")).click();
+			log.info("Gmail Login Successful");
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//div[@class='a3s']/div//tbody//tr/td/a")).click();
+			log.info("Opening Confirmation Link");
+			Thread.sleep(5000);
+			Object[] currentWindow =driver.getWindowHandles().toArray();
+			String ParentWindow=currentWindow[0].toString();
+			String ChildWindow=currentWindow[1].toString();
+			driver.switchTo().window(ParentWindow);
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("/html/body/div[7]/div[3]/div/div[1]/div[4]/div[1]/div[1]/div[1]/div/div[3]/div[1]/a")).click();
+			driver.findElement(By.id("gb_71")).click();
+			log.info("Gmail Logging Out Successful");
+			driver.close();
+			driver.switchTo().window(ChildWindow);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			financialInstitutionPasswordReset(driver);
+		}
+		catch(Exception e)
+		{
+			log.info("Error in checking gamil link");
+		}
+	}
+	
+	
+	/**
+	 * Test Case for setting a new password
+	 * to the financial institution user account
+	 * @throws InterruptedException 
+	 */
+	public void financialInstitutionPasswordReset(WebDriver driver)
+	{
+		try
+		{
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("password")).sendKeys("abc");
+			driver.findElement(By.id("passwordRep")).sendKeys("abc");
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("newpwd_button")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			Thread.sleep(3000);
+			driver.findElement(By.id("password")).clear();
+			driver.findElement(By.id("password")).sendKeys("abcsdf");
+			driver.findElement(By.id("passwordRep")).clear();
+			driver.findElement(By.id("passwordRep")).sendKeys("abcfsdfsf");
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("newpwd_button")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			Thread.sleep(3000);
+			driver.findElement(By.id("password")).clear();
+			driver.findElement(By.id("password")).sendKeys(userNewPassword);
+			driver.findElement(By.id("passwordRep")).clear();
+			driver.findElement(By.id("passwordRep")).sendKeys(userNewPassword);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("newpwd_button")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			Thread.sleep(3000);
+   			log.info("New password setted to account successfully");
+   			
+   			firstTimeLoginVerification(driver);
+		}
+		catch(Exception e)
+		{
+			log.info("Error in setting a new password");
+		}
+	}
+	
+	
+	
+	/**
+	 * Test Case for logging into financial institution
+	 * portal using new password set for user
+	 * @throws InterruptedException 
+	 */
+	public void firstTimeLoginVerification(WebDriver driver)
+	{
+		try
+		{
+			Thread.sleep(5000);
+			driver.get(FinancialInstitutionURL);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("login_principal")).clear();
+			driver.findElement(By.id("login_principal")).sendKeys("abc@fisoc.com");
+			driver.findElement(By.id("login_password")).clear();
+			driver.findElement(By.id("login_password")).sendKeys("123456");
+			driver.findElement(By.id("login_button")).click();
+			Thread.sleep(5000);
+			
+
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("login_principal")).clear();
+			driver.findElement(By.id("login_principal")).sendKeys(newEmail);
+			driver.findElement(By.id("login_password")).clear();
+			driver.findElement(By.id("login_password")).sendKeys(userNewPassword);
+			driver.findElement(By.id("login_button")).click();
+			Thread.sleep(5000);
+			log.info("User Login Successful");
+
+
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("content-close")).click();
+			
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//button[@id='content-accept']")).click();
+			log.info("Accepting Terms and Condition");
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//button[@id='content-accept']")).click();
+			log.info("Accepting Privacy Policy");
+			log.info("Skipping Address verification");
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.id("verifyHomeAddress_asklater")).click();
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			log.info("Skipping Facebook connect");
+			driver.findElement(By.id("fbconnect_skip")).click();
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//a[@class='account_decline']")).click();
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			log.info("Logging Out");
+			driver.findElement(By.id("field_name")).click();
+			driver.findElement(By.id("logout")).click();
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);		
+			
+			
+		}
+		catch(Exception e)
+		{
+			log.info("Error in User Login");
+		}
+	}
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,36 @@
+package com.fisoc.admin;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.DriverManager;
+
+public class BaseClass 
+{ 
+	private static Logger log = Logger.getLogger(BaseClass.class);
+	WebDriver driver;
+	
+	@BeforeTest
+	public void launchApplication() throws Exception
+	{
+		log.info("Entering into Browser Selection");
+		driver = DriverManager.getDriverForBrowser(TestConstants.BROWSER_FIREFOX);
+		driver.manage().window().maximize();
+		//Open application URL
+		driver.get(TestConstants.AdminLoginUrl);
+		//Set Timeout
+		driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+	}
+	
+	@AfterTest
+	public void quit()
+	{
+		//Quit the browser
+		driver.quit();
+	}
+}

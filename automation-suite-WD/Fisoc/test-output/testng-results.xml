@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="80205" started-at="2015-03-18T12:57:11Z" finished-at="2015-03-18T12:58:32Z">
+    <groups>
+      <group name="Functional">
+        <method signature="AddUserCreditPointsTest.addUserCreditPointsTest()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="addUserCreditPointsTest" class="com.fisoc.admin.AddUserCreditPointsTest"/>
+      </group> <!-- Functional -->
+      <group name="AdminSiteRegression">
+        <method signature="AddUserCreditPointsTest.addUserCreditPointsTest()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="addUserCreditPointsTest" class="com.fisoc.admin.AddUserCreditPointsTest"/>
+      </group> <!-- AdminSiteRegression -->
+      <group name="Regression">
+        <method signature="AddUserCreditPointsTest.addUserCreditPointsTest()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="addUserCreditPointsTest" class="com.fisoc.admin.AddUserCreditPointsTest"/>
+      </group> <!-- Regression -->
+      <group name="Smoke">
+        <method signature="AddUserCreditPointsTest.addUserCreditPointsTest()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="addUserCreditPointsTest" class="com.fisoc.admin.AddUserCreditPointsTest"/>
+      </group> <!-- Smoke -->
+    </groups>
+    <test name="Default test" duration-ms="80205" started-at="2015-03-18T12:57:11Z" finished-at="2015-03-18T12:58:32Z">
+      <class name="com.fisoc.admin.AddUserCreditPointsTest">
+        <test-method status="PASS" signature="launchApplication()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="launchApplication" is-config="true" duration-ms="6625" started-at="2015-03-18T18:27:11Z" finished-at="2015-03-18T18:27:18Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- launchApplication -->
+        <test-method status="PASS" signature="addUserCreditPointsTest()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="addUserCreditPointsTest" duration-ms="72941" started-at="2015-03-18T18:27:18Z" finished-at="2015-03-18T18:28:31Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- addUserCreditPointsTest -->
+        <test-method status="PASS" signature="teardown()[pri:0, instance:com.fisoc.admin.AddUserCreditPointsTest@1753acfe]" name="teardown" is-config="true" duration-ms="614" started-at="2015-03-18T18:28:31Z" finished-at="2015-03-18T18:28:32Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- teardown -->
+      </class> <!-- com.fisoc.admin.AddUserCreditPointsTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

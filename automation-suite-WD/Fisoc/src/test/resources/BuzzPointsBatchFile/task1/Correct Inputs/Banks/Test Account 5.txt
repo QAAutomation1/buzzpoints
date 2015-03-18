@@ -1,0 +1,1 @@
+[{ "rowid":"1" , "ssn":"06183005", "acctNo":"9872347005", "ownerName":"Test marketing5", "type":"CHECKING", "testaccount":"true" }]

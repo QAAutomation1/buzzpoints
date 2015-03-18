@@ -1,0 +1,127 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/17/2015
+ * @Comments This automation class will serve the User Login and logout use cases
+ */
+package com.fisoc.user.helpers;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+/**
+ * Test Case for Reading the excel data and login into the admin
+ * portal on successful login to the application.
+ * Input: WebDriver
+ * Output: Void
+ */
+public class UserLoginPageTestHelper 
+{
+	 public static String financialInstitutionLoginEmail;
+	 public static String financialInstitutionLoginPassword;
+	 public static String financialInstitutionName;
+	 public static String financialInstitutionUrl;
+	 boolean present;
+	 ExcelLib xllib = new ExcelLib();
+	 TestConstants constants = new TestConstants();
+	 private static Logger log = Logger.getLogger(UserLoginPageTestHelper.class);
+	 
+	 /**
+	 * Test Case for Reading the excel data and login into the user
+	 * portal on successful login to the application.
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	 public void userLoginInitialPage(WebDriver driver)
+	 {
+		try
+		{
+			int rowCount = xllib.getRowCount("UserLogin");
+			for(int i=1;i<= rowCount;i++)
+			{
+				financialInstitutionLoginEmail = xllib.getExcelData("UserLogin", i, 0);
+				financialInstitutionLoginPassword = xllib.getExcelData("UserLogin", i, 1);
+				financialInstitutionName = xllib.getExcelData("UserLogin",i,2); 
+				financialInstitutionUrl = constants.financialInstitutionUrlConvertActions(financialInstitutionName);
+    			Boolean loginStatus = userLoginPageActions(driver, financialInstitutionLoginEmail, financialInstitutionLoginPassword,financialInstitutionName,financialInstitutionUrl);
+				//Check user logged in status
+				if(loginStatus == true)
+				{
+					userLogoutPageActions(driver);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+	 }
+	
+	/**
+	 * Test Case for Sign in for user portal
+	 * Upon correct login data we can successfully login
+	 * Input: WebDriver, financialInstitutionLoginEmail, financialInstitutionLoginPassword,financialInstitutionName,financialInstitutionUrl
+	 * Output: Boolean
+	 * @throws InvalidFormatException
+	 */	 
+	public boolean userLoginPageActions(WebDriver driver, String financialInstitutionLoginEmail, String financialInstitutionLoginPassword,String financialInstitutionName,String financialInstitutionUrl) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			log.info("********************************************");
+			driver.get(financialInstitutionUrl);
+		  	log.info("Navigating to "+financialInstitutionUrl+"");
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.id("login_principal")).clear();
+			driver.findElement(By.id("login_principal")).sendKeys(financialInstitutionLoginEmail);	
+			driver.findElement(By.id("login_password")).clear();
+			driver.findElement(By.id("login_password")).sendKeys(financialInstitutionLoginPassword);	
+			driver.findElement(By.id("login_button")).click();
+			log.info("Waiting for signin process to complete...");
+			boolean logoutText = driver.findElement(By.id("fbphoto")).isDisplayed();
+			//Check whether user logged into application or not
+			if(!logoutText)
+			{				
+				return true;
+			}
+			else
+			{
+				log.info("Unsuccessful Login into User Page");
+				return false;
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Successful Login into User Page");
+			return true;
+		}		
+	}
+	
+	/**
+	 * Test Case for loging out of the admin
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void userLogoutPageActions(WebDriver driver) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
+			log.info("Successful Logout from Admin Page");
+		}
+		catch(Exception e)
+		{
+			log.info("Error in Admin Logout");
+		}	
+	}
+}
+
+
+

@@ -1,0 +1,28 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/06/2015
+ * @Updated Date :03/17/2015
+ * @Comments :This automation class will login into User Portal and visit Activity Page.
+ */
+package com.fisoc.user;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.testng.annotations.Test;
+import com.fisoc.user.helpers.UserActivityPageTestHelper;
+import com.fisoc.util.BaseClass;
+
+public class RedeemMerchanteRewardTest extends BaseClass
+{
+	/**
+	 * Test Case for visit User Activity Page.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */	 
+	@Test(groups = { "Regression" ,"Functional","Smoke", "UserSiteRegression"})
+	 public void userActivityTest() throws InvalidFormatException
+	 {
+		UserActivityPageTestHelper activity = new UserActivityPageTestHelper();
+		activity.userActivityInitialPage(driver);
+	 }
+}

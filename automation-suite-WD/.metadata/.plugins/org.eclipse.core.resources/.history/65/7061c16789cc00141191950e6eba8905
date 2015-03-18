@@ -1,0 +1,39 @@
+package com.fisoc.admin.helpers;
+
+import org.openqa.selenium.WebDriver;
+
+import com.fisoc.util.ExcelLib;
+
+public class VerifyAdminLoginPage {
+	
+	AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+	ExcelLib xllib = new ExcelLib();
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	
+	 public Boolean adminPageLoginInitialPage(WebDriver driver)
+	 {
+		try
+		{
+			int rowCount = xllib.getRowCount("AdminLogin");
+			for(int i=1;i<= rowCount;i++)
+			{
+				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
+				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1);
+				Boolean adminPageloginStatus = adminPageLoginActions(driver,adminLoginEmail,adminLoginPassword);
+				//Check whether admin login credentials valid or not
+				if(adminPageloginStatus==true)
+				{
+					adminPageLogoutActions(driver);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Test Execution Failed");
+		}
+		return present;
+	 }
+	
+
+}

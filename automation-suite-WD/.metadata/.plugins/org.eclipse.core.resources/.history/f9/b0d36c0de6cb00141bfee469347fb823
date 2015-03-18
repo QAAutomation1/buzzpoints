@@ -1,0 +1,33 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/16/2015
+ * @Comments This automation class will serve the User Login use cases
+ */
+package com.fisoc.user;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.testng.annotations.Test;
+import com.fisoc.user.helpers.UserLoginPageTestHelper;
+import com.fisoc.util.BaseClass;
+
+public class UserLoginPageTest extends BaseClass
+{
+	private static Logger log = Logger.getLogger(UserLoginPageTest.class);
+	 
+	/**
+	 * Test Case for submitting the Login page depending on the test data passed
+	 * valid email and password should allow the user to
+	 * login in to the application.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */	 
+	 @Test(dependsOnMethods={"browserSetup"})
+	 public void userLoginTest() throws InvalidFormatException
+	 {
+		 UserLoginPageTestHelper userLogin = new UserLoginPageTestHelper();
+		 userLogin.userLoginInitialPage(driver);
+	 }
+}

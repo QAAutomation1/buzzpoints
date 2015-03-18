@@ -1,0 +1,55 @@
+package com.fisoc.admin;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Test;
+import com.fisoc.admin.helpers.ManageMerchantRewardsTestHelper;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.DriverManager;
+
+public class ManageMerchantRewardsTest
+{
+
+	/**
+	 * @param args
+	 */
+	 private WebDriver driver;
+	 private static Logger log = Logger.getLogger(AdminBrowseAllTransactionTest.class);
+		 
+	/**
+	 * Test case to load the necessary driver to run
+	 * @throws Exception 
+	 */	 
+	 @Test
+	 public void browserSetup() throws Exception
+	 {
+		 log.info("------Entering into Browser Selection--------");
+		 driver=DriverManager.getDriverForBrowser(TestConstants.BROWSER_FIREFOX);
+		 driver.manage().window().maximize();
+	 }
+	 	 
+	/**
+	 * Test Case for managing Merchant Rewards,
+	 * based on the test data inputs.k
+	 * @throws InvalidFormatException 
+	 * @throws InterruptedException 
+	 */	 
+	 @Test(dependsOnMethods={"browserSetup"})
+	 public void merchantRewardsTestPage() throws InvalidFormatException, InterruptedException
+	 {
+		 ManageMerchantRewardsTestHelper merchRewards = new ManageMerchantRewardsTestHelper();
+		 merchRewards.merchantRewardsInitialPage(driver);
+	 }
+	
+	 /**
+	 * Test case to close the driver 
+	 */	  
+	 @Test(dependsOnMethods={"merchantRewardsTestPage"})
+	 public void browserClose()
+	 {
+		 log.info("-------closing the browser--------");
+		 driver.close();
+		 driver.quit();
+	 }
+}

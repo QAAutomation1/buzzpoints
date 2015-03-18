@@ -1,0 +1,135 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/06/2015
+ * @Updated Date :03/16/2015
+ * @Comments:This automation class will login into User Portal and Redeem an eReward. 
+**/
+package com.fisoc.user.helpers;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+public class RedeemMerchanteRewardTestHelper 
+{
+	 public static String financialInstitutionLoginEmail;
+	 public static String financialInstitutionLoginPassword;
+	 public static String financialInstitutionName;
+	 public static String financialInstitutionUrl;
+	 boolean present;
+	 ExcelLib xllib = new ExcelLib();
+	 TestConstants constants = new TestConstants();
+	 UserLoginPageTestHelper userLogin = new UserLoginPageTestHelper();
+	 private static Logger log = Logger.getLogger(UserLoginPageTestHelper.class);
+	 
+	 /**
+	 * Test Case for Reading the excel data and login into the user
+	 * portal on successful login to the application.
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	 public void redeemMerchanteRewardInitialPage(WebDriver driver)
+	 {
+		try
+		{
+			int rowCount = xllib.getRowCount("UserLogin");
+			for(int i=1;i<= rowCount;i++)
+			{
+				financialInstitutionLoginEmail = xllib.getExcelData("UserLogin", i, 0);
+				financialInstitutionLoginPassword = xllib.getExcelData("UserLogin", i, 1);
+				financialInstitutionName = xllib.getExcelData("UserLogin",i,2); 
+				financialInstitutionUrl = constants.financialInstitutionUrlConvertActions(financialInstitutionName);
+    			Boolean userloggedInStatus = userLogin.userLoginPageActions(driver, financialInstitutionLoginEmail, financialInstitutionLoginPassword,financialInstitutionName,financialInstitutionUrl);
+				//Check user logged in status
+				if(userloggedInStatus == true)
+				{
+					redeemMerchanteRewardActions(driver);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+	 }
+	
+	/**
+	 * Test Case for login into user portal
+	 * Upon correct login data we can successfully login
+	 * Input: WebDriver, financialInstitutionLoginEmail, financialInstitutionLoginPassword,financialInstitutionName,financialInstitutionUrl
+	 * Output: Boolean
+	 * @throws InvalidFormatException
+	 */	 
+	public boolean redeemMerchanteRewardActions(WebDriver driver) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			driver.findElement(By.id("location")).clear();
+			driver.findElement(By.id("location")).sendKeys(location);
+			driver.findElement(By.id("locationGo")).click();
+			driver.findElement(By.xpath("//span[contains(text(),'Businesses')]")).click();
+			driver.findElement(By.id("merchantFilterString")).clear();
+			driver.findElement(By.id("merchantFilterString")).sendKeys(merchantTitle);
+			driver.findElement(By.id("merchantSearchButton")).click();
+			driver.findElement(By.xpath("//div[contains(text(),'"+merchantTitle+"')]")).click();
+			driver.findElement(By.xpath("//span[contains(text(),'pts')]")).click();
+			
+			String pointsBeforeRedeem = driver.findElement(By.xpath("//div[@id='field_points']/div")).getText();
+			log.info("Points before Redemption is "+pointsBeforeRedeem+"");
+			log.info("Agree and Proceed Redemption");
+			driver.findElement(By.xpath("//a[contains(text(),'Agree and Proceed')]")).click();
+					
+			//Select the Check boxes.
+			List<WebElement> checkBoxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+			for (int i = 0; i < checkBoxes.size(); i++) {
+				checkBoxes.get(i).click();
+			}
+			
+			driver.findElement(By.xpath("//button[contains(text(),'Redeem')]")).click();
+			driver.findElement(By.xpath("//div[@class='modal-footer post_fb_buttons']/a[@class='btn']")).click();
+			String pointsAfterRedeem = driver.findElement(By.xpath("//div[@id='field_points']/div")).getText();
+			log.info("Points after Redemption is "+pointsAfterRedeem+"");
+			driver.findElement(By.xpath("//img[@id='fbphoto']")).click();
+			log.info("View Rewards in My Purchases");
+			driver.findElement(By.xpath("//a[@id='show_myrewards_action_elem']")).click();
+			log.info("View and print Rewards");
+			driver.findElement(By.xpath("//a[text()='(View & Print)']")).click();
+    		driver.findElement(By.id("fbphoto")).click();
+			driver.findElement(By.id("logout")).click();
+			log.info("user Logging out");
+		}
+		catch(Exception e)
+		{
+			log.info("Successful Login into User Page");
+			return true;
+		}		
+	}
+	
+	/**
+	 * Test Case for log out from the user page
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void userLogoutPageActions(WebDriver driver) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.id("fbphoto")).click();
+			driver.findElement(By.id("logout")).click();
+			log.info("Successful Logout from User Page");
+		}
+		catch(Exception e)
+		{
+			log.info("Error in User Logout");
+		}	
+	}
+}

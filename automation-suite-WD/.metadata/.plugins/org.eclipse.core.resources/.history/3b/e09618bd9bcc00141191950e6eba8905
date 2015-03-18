@@ -1,0 +1,135 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/06/2015
+ * @Updated Date :03/17/2015
+ * @Comments This automation class will serve the Admin Login and set up Merchant eCaptive Loyalty Card.
+ */
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+import com.fisoc.util.ExcelLib;
+
+public class SetUpMerchanteCaptiveLoyaltyCardTestHelper 
+{
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	public static String numOfTransactions;
+	public static String minTransactionAmount;
+	public static String eLoyaltyStartDate;
+	public static String eLoyaltyEndDate;
+	public static String merchantTitle;
+	public int rowCount;
+	ExcelLib xllib = new ExcelLib();
+	private static Logger log = Logger.getLogger(SetUpMerchanteCaptiveLoyaltyCardTestHelper.class);
+	AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+	
+	/**
+	 * Test Case for Reading the excel data and login into the admin portal
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void setUpMerchantLoyaltyCardInitialPage(WebDriver driver)
+	{
+		try
+		{
+			 rowCount= xllib.getRowCount("AdminLogin");
+			 for (int i = 1; i <= rowCount; i++) 
+			 {
+				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
+				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1);
+						
+				Boolean adminPageLoginStatus = adminLogin.adminPageLoginActions(driver,adminLoginEmail,adminLoginPassword);
+				//Check admin login status
+				if(adminPageLoginStatus == true)
+				{
+					setUpMerchantLoyaltyCardActions(driver);
+					driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+					adminLogin.adminPageLogoutActions(driver);					
+				}
+			 }
+		}
+		catch(Exception e)
+		{
+			log.info("Test case failed to execute");
+		}
+	}
+	
+	/**
+	 * Test Case for adding Merchant eCaptive Loyalty Card.
+	 * on correct data we can successfully add Merchant eCaptive Loyalty Card
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void setUpMerchantLoyaltyCardActions(WebDriver driver) throws InvalidFormatException
+	{
+		try
+		{
+			int rowCount =xllib.getRowCount("SetUpMerchantLoyaltyCard");
+			for (int i=1;i<=rowCount;i++)
+			{
+				merchantTitle=xllib.getExcelData("SetUpMerchantLoyaltyCard", i,0);
+				numOfTransactions = xllib.getExcelData("SetUpMerchantLoyaltyCard", i,1);
+				minTransactionAmount = xllib.getExcelData("SetUpMerchantLoyaltyCard", i,2);
+				eLoyaltyStartDate = xllib.getExcelData("SetUpMerchantLoyaltyCard", i,3);
+				eLoyaltyEndDate = xllib.getExcelData("SetUpMerchantLoyaltyCard", i,3);
+				
+				log.info("Browsing all Merchants");	
+				driver.findElement(By.id("module_btn_browse_all_merchants")).click();
+				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				
+				/*driver.findElement(By.xpath("//a[contains(text(),'Filter')]")).click();
+				driver.findElement(By.xpath("//ul[@id='search_filter']")).click();
+				driver.findElement(By.xpath("//li[@name='statusfilter']")).click();
+				WebElement filterValue = driver.findElement(By.xpath("//ul[@id='search_filter']"));
+				Select st = new Select(filterValue);
+				st.selectByIndex(2);*/
+								
+				driver.findElement(By.name("namefilter")).clear();
+				driver.findElement(By.name("namefilter")).sendKeys(merchantTitle);
+				driver.findElement(By.id("btnSearch")).click();
+				driver.findElement(By.xpath("//a[contains(text(),'"+merchantTitle+"')]")).click();
+				driver.findElement(By.xpath("//a[@href='loyalty-card']")).click();
+				log.info("Loyalty card updating");	
+							
+				boolean isCheckBoxChecked = driver.findElement(By.id("has_loyalty_card_checkbox")).isSelected();
+				if(!isCheckBoxChecked){
+					driver.findElement(By.id("has_loyalty_card_checkbox")).click();
+				}
+				
+				driver.findElement(By.id("loyaltycard_slots")).clear();
+				driver.findElement(By.id("loyaltycard_slots")).sendKeys(numOfTransactions);
+								
+				/*driver.findElement(By.xpath("//input[@id='loyaltycard_points']")).clear();
+				driver.findElement(By.xpath("//input[@id='loyaltycard_points']")).sendKeys(pointsAwarded);*/
+				
+				driver.findElement(By.id("isCapitiveELoyalty")).click();
+				WebElement loyaltyCardValue = driver.findElement(By.id("loyaltycard_offer"));
+				Select st1= new Select(loyaltyCardValue);
+				st1.selectByIndex(1);
+				
+				driver.findElement(By.id("loyaltycard_minAmount")).clear();
+				driver.findElement(By.id("loyaltycard_minAmount")).sendKeys(minTransactionAmount);
+				
+				driver.findElement(By.id("loyaltycard_startDate")).clear();
+				driver.findElement(By.id("loyaltycard_startDate")).sendKeys(eLoyaltyStartDate);
+				
+				/*driver.findElement(By.xpath("//input[@id='loyaltycard_endDate']")).clear();
+				driver.findElement(By.xpath("//input[@id='loyaltycard_endDate']")).sendKeys(eLoyaltyEndDate);*/
+				
+				driver.findElement(By.id("edit_merchant_save")).click();
+				log.info("Loyalty card saved");	
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Reward failed to save");
+		}
+	}
+}

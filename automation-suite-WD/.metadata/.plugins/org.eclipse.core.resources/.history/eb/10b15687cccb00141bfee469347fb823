@@ -1,0 +1,55 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/13/2015
+ * @Comments This automation class will serve the Admin Login use cases
+ */
+package com.fisoc.admin;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Test;
+
+import com.fisoc.admin.helpers.AdminLoginPageTestHelper;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.BaseClass;
+import com.fisoc.util.DriverManager;
+import com.fisoc.util.ExcelLib;
+
+public class AdminLoginPageTest extends BaseClass
+{
+	 WebDriver driver;
+	 ExcelLib xllib = new ExcelLib();
+	 private static Logger log = Logger.getLogger(AdminLoginPageTest.class);
+	 */
+	 /**
+	 * Test case to load the necessary driver to run
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws Exception 
+	 */
+	 
+	 
+	/**
+	 * Test Case for submitting the Login page depending on the test data passed
+	 * valid email and password should allow the user to
+	 * login in to the application.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */	 
+	 @Test
+	 public void adminLoginTest() throws InvalidFormatException
+	 {
+		 AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+		 adminLogin.adminPageLoginInitialPage(driver);
+	}
+		 
+	/**
+	 * Test case to close the driver 
+	 * Input: No parameter
+	 * Output: Void
+	 */	  
+	
+}

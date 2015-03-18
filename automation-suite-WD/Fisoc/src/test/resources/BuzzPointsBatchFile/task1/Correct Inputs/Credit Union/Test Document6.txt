@@ -1,0 +1,1 @@
+[{"type":"CHECKING","rowid":0,"ssn":"0111113006","acctNo":"194117006","memberNo":"13r8b1a606","ownerName":"Automation Team6","accountAdditionInfoCode":"accblah6","accountAdditionInfoDisplayLabel":"Account Blah6","testaccount":"true"}]

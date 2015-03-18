@@ -1,0 +1,76 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/13/2015
+ * @Comments This util class will contain methods to load drivers
+ */
+package com.fisoc.util;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+
+public class DriverManager 
+{
+	public static WebDriver driver;
+	private static Logger log = Logger.getLogger(DriverManager.class);
+	public static String downloadPath = "C:\\Users\\admin\\Desktop\\temp";
+	//public static String downloadPath = "D:\\download";
+	
+	public static WebDriver getDriverForBrowser(String browserName) throws Exception 
+	{
+		if (browserName.equalsIgnoreCase("CH"))
+		{
+			log.info("Chrome browser has been selected");
+			ChromeOptions choption = new ChromeOptions();		    
+			choption.addArguments("ignore-certifcate-errors","test-type","start-maximized","no-default-browser-check");
+			DesiredCapabilities descap= DesiredCapabilities.chrome();
+			descap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true );
+			descap.setCapability(ChromeOptions.CAPABILITY, descap);		
+			System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chromedriver.exe");
+			log.info("Chrome browser has been successfully loaded");
+			return new ChromeDriver();
+		}		
+		else if (browserName.equalsIgnoreCase("FF"))
+		{		
+			log.info("Fire Fox browser has been selected");
+			log.info("Fire Fox browser has been successfully loaded");
+			return new FirefoxDriver(FirefoxDriverProfile());
+		}
+		else 
+		{
+			log.info("Internet Explorer browser has been selected");
+			DesiredCapabilities descap= DesiredCapabilities.internetExplorer();
+			descap.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+			System.setProperty("webdriver.ie.driver", "./src/test/resources/drivers/IEDriverServer_32.exe");
+			log.info("Internet Explorer browser has been successfully loaded");
+			return new InternetExplorerDriver();
+		}
+	}
+	
+	public static FirefoxProfile FirefoxDriverProfile() throws Exception 
+	{
+		FirefoxProfile profile = new FirefoxProfile();
+		profile.setPreference("browser.download.folderList", 2);
+		profile.setPreference("browser.download.manager.showWhenStarting", false);
+		profile.setPreference("browser.download.dir", downloadPath);
+		profile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/csv, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c");
+		profile.setPreference("browser.helperApps.neverAsk.openFile","text/csv, application/csv, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel,application/vnd.ms-excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel");
+		profile.setPreference("browser.helperApps.alwaysAsk.force", false);
+		profile.setPreference("browser.download.manager.alertOnEXEOpen", false);
+		profile.setPreference("browser.download.manager.focusWhenStarting", false);
+		profile.setPreference("browser.download.manager.useWindow", false);
+		profile.setPreference("browser.download.manager.showAlertOnComplete", false);
+		profile.setPreference("browser.download.manager.closeWhenDone", false);
+		return profile;
+	}
+
+}

@@ -1,0 +1,119 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/13/2015
+ * @Comments This automation class will serve the Admin Login and logout use cases
+ */
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+
+public class AdminLoginPageTestHelper 
+{
+	
+	 private String adminLoginUrl=TestConstants.AdminLoginUrl;
+	 private String adminLoginEmail;
+	 private String adminLoginPassword;
+	 boolean present;
+	 ExcelLib xllib = new ExcelLib();
+	 private static Logger log = Logger.getLogger(AdminLoginPageTestHelper.class);
+	 
+	 /**
+	 * Test Case for Reading the excel data and login into the admin
+	 * portal on successful login to the application.
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	 public void adminPageLoginInitialPage(WebDriver driver)
+	 {
+		try
+		{
+			int rowCount = xllib.getRowCount("AdminLogin");
+			for(int i=1;i<= rowCount;i++)
+			{
+				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
+				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1);
+				Boolean loginStatus = adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
+				//Check whether admin login credentials valid or not
+				if(loginStatus==true)
+				{
+					//adminPageLogoutActions(driver);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+	 }
+	
+	/**
+	 * Test Case for Signing in for administrator portal
+	 * Upon correct login data we can successfully login
+	 * Input: WebDriver, AdminLoginEmail, AdminLoginPassword
+	 * Output: String
+	 * @throws InvalidFormatException
+	 */	 
+	public Boolean adminPageLoginActions(WebDriver driver, String adminLoginEmail, String adminLoginPassword) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			driver.get(adminLoginUrl);
+			log.info("********************************");
+			log.info("navigating to "+adminLoginUrl+"");
+			//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//input[@name='principal']")).clear();		
+			driver.findElement(By.xpath("//input[@name='password']")).clear();	
+			driver.findElement(By.xpath("//input[@name='principal']")).sendKeys(adminLoginEmail);	
+			driver.findElement(By.xpath("//input[@name='password']")).sendKeys(adminLoginPassword);	
+			driver.findElement(By.xpath("//a[@id='signin']")).click();
+
+			log.info("Waiting for signin process to complete...");
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			boolean logoutText = driver.findElement(By.xpath("//Strong[contains(text(),'Oops!')]")).isDisplayed();
+			//Check whether admin logged into application or not
+			if(!logoutText)
+			{				
+				return true;
+			}
+			else
+			{
+				log.info("Unsuccessful Login into Admin Page");
+				return false;
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Successful Login into Admin Page");
+			return true;
+		}		
+	}
+	
+	/**
+	 * Test Case for loging out of the admin
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void adminPageLogoutActions(WebDriver driver) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+	{
+		try
+		{
+			//driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
+			log.info("Successful Logout from Admin Page");
+		}
+		catch(Exception e)
+		{
+			log.info("Error in Admin Logout");
+		}	
+	}
+}
+
+
+

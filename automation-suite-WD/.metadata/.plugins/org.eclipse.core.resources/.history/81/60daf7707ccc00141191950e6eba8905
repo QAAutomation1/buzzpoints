@@ -1,0 +1,193 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/06/2015
+ * @Updated Date :03/17/2015
+ * @Comments This automation class will serve the Admin Login and set up Merchant eReward(s) use cases
+ */
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+public class SetUpMerchanteRewardTestHelper 
+{
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	public int rowCount;
+	public static String merchantName;
+	public static String resultsPerPage;
+	public static String eLoyaltyCardCompletion;
+	public static String description;
+	public static String value;
+	public static String points;
+	public static String filePath;
+	public static String merchantTitle;
+	public static String rewardType;
+	public static String rewardSaveType;
+	ExcelLib xllib = new ExcelLib();
+	private static Logger log = Logger.getLogger(SetUpMerchanteRewardTestHelper.class);
+	AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+	
+	/**
+	 * Test Case for Reading the excel data and login into the admin
+	 * portal on successful login we can upload 
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void setUpMerchanteRewardInitialPage(WebDriver driver)
+	{
+		try
+		{
+			 rowCount= xllib.getRowCount("SetUpMerchanteReward");
+			 for (int i = 1; i <= rowCount; i++) 
+			 {
+				adminLoginEmail = xllib.getExcelData("SetUpMerchanteReward", i, 0);
+				adminLoginPassword = xllib.getExcelData("SetUpMerchanteReward", i, 1);
+						
+				Boolean adminPageLoginStatus = adminLogin.adminPageLoginActions(driver,adminLoginEmail,adminLoginPassword);
+				//Check admin login status
+				if(adminPageLoginStatus == true)
+				{
+					setUpMerchanteRewardActions(driver);
+					driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+					adminLogin.adminPageLogoutActions(driver);					
+				}
+			 }
+		}
+		catch(Exception e)
+		{
+			log.info("Test case failed to execute");
+		}
+	}
+	
+	/**
+	 * Test Case for adding Merchant eReward
+	 * on correct data we can successfully add Merchant eReward
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void setUpMerchanteRewardActions(WebDriver driver) throws InvalidFormatException
+	{
+		try
+		{
+			int rowCount =xllib.getRowCount("SetUpMerchanteReward");
+			for (int i=1;i<=rowCount;i++)
+			{
+				merchantTitle=xllib.getExcelData("SetUpMerchanteReward", i,2);
+				eLoyaltyCardCompletion = xllib.getExcelData("SetUpMerchanteReward", i,3);
+				description = xllib.getExcelData("SetUpMerchanteReward", i,4);
+				value = xllib.getExcelData("SetUpMerchanteReward", i,5);
+				points = xllib.getExcelData("SetUpMerchanteReward", i,6);
+				rewardType=xllib.getExcelData("SetUpMerchanteReward", i,7);
+				filePath=xllib.getExcelData("SetUpMerchanteReward", i,8);
+				rewardSaveType=xllib.getExcelData("SetUpMerchanteReward", i,9);
+				
+				driver.findElement(By.id("module_btn_upload_fi_account_batch")).click();	
+				driver.findElement(By.id("edit_merchant_reward")).click();
+				driver.findElement(By.xpath("//a[text()='Find']")).click();
+				driver.findElement(By.name("namefilter")).clear();
+				driver.findElement(By.name("namefilter")).sendKeys(merchantTitle);
+				driver.findElement(By.xpath("//i[@class='icon-search icon-white']")).click();
+				driver.findElement(By.xpath("//a[@class='btn btn-primary btn-small']")).click();
+				
+				WebElement eLoyaltyCardCompletionStatus = driver.findElement(By.id("captiveELoyaltyEnabled"));
+				Select st1= new Select(eLoyaltyCardCompletionStatus);
+				st1.selectByVisibleText(eLoyaltyCardCompletion);
+				
+				driver.findElement(By.name("description")).clear();
+				driver.findElement(By.name("description")).sendKeys(description);
+				driver.findElement(By.name("value")).clear();
+				driver.findElement(By.name("value")).sendKeys(value);
+							
+				//Check whether eReward eligible to be rewarded for completion of an eLoyaltyCard for this merchant
+				if(eLoyaltyCardCompletion.equalsIgnoreCase(TestConstants.E_REWARD_ELIGIBLE)){
+					driver.findElement(By.id("eReward_setup_pointsvalue")).clear();
+					driver.findElement(By.id("eReward_setup_pointsvalue")).sendKeys(points);
+				}
+				
+				WebElement rewardTypeText = driver.findElement(By.xpath("//select[@id='rewardtype']"));
+				Select st2 = new Select(rewardTypeText);
+				st2.selectByVisibleText(rewardType);
+								
+				//driver.findElement(By.id("preset")).click();
+				//Check whether eReward is selected
+				if(rewardType.equalsIgnoreCase(TestConstants.E_REWARD)){
+					driver.findElement(By.xpath("//a[text()='Automatic']")).click();
+				}
+				
+				log.info("Uploading image file");
+				driver.findElement(By.name("file")).sendKeys(filePath);
+				//Check whether eReward save type(Publish or Save Draft)				
+				if(rewardSaveType.equalsIgnoreCase(TestConstants.REWARD_SAVE_TYPE_PUBLISH))
+				{
+					eRewardPublishAction(driver);
+				}
+				else if(rewardSaveType.equalsIgnoreCase(TestConstants.REWARD_SAVE_TYPE_DRAFT))
+				{
+					eRewardSaveToDraftAction(driver);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Reward failed to save");
+		}
+	}
+	
+	/**
+	 * Test Case for publishing Merchant eReward
+	 * on correct data we can successfully publish eReward
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void eRewardPublishAction(WebDriver driver) {
+		
+		log.info("Reward publishing");
+		driver.findElement(By.id("publish_reward")).click();
+		Alert alert = driver.switchTo().alert();
+		alert.accept(); 
+		alert = driver.switchTo().alert();
+		String rewardSuccess = alert.getText();
+		alert.accept(); 
+		if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED))
+		{
+			log.info("Reward successfully saved");
+		}
+		else
+		{
+			log.info("Reward not saved");
+		}
+	}
+	
+	/**
+	 * Test Case for saving Merchant eReward to draft
+	 * on correct data we can successfully save to draft
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void eRewardSaveToDraftAction(WebDriver driver) {
+		log.info("Reward Saving to Draft");
+		driver.findElement(By.xpath("//a[@id='draft_reward']")).click();
+		Alert alert3 = driver.switchTo().alert();
+		String rewardSuccess = alert3.getText();
+		alert3.accept(); 
+		if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED)){
+			log.info("Reward successfully saved");
+		}else{
+			log.info("Reward not saved");
+		}		
+	}
+}

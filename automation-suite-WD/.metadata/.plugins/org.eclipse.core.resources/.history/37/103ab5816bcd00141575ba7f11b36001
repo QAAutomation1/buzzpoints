@@ -1,0 +1,142 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/09/2015
+ * @Updated Date :03/18/2015
+ * @Comments This automation class will login into admin portal and add Credit Points to Merchant.
+ */
+package com.fisoc.admin.helpers;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.user.helpers.UserActivityPageTestHelper;
+import com.fisoc.util.ExcelLib;
+
+public class AddUserCreditpointsTestHelper 
+{
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	public static String creditPoints;
+	public static String creditDescription;
+	public static String financialInstitutionLoginEmail;
+	Set<String> allWindows;
+	static Iterator<String> it;
+	static String parent;
+	static String child;
+	public int rowCount;
+	ExcelLib xllib = new ExcelLib();
+	UserActivityPageTestHelper activity = new UserActivityPageTestHelper();
+	private static Logger log = Logger.getLogger(AddUserCreditpointsTestHelper.class);
+	
+	/**
+	 * Test Case for Reading the excel data and login into the admin
+	 * portal on successful we can Credit Points
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void addUserCreditPointsInitialPage(WebDriver driver)
+	{
+		try
+		{
+			 AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+			 rowCount= xllib.getRowCount("AdminLogin");
+			 for (int i = 1; i <= rowCount; i++) 
+			 {
+				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
+				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1); 
+				Boolean adminPageloginStatus = adminLogin.adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
+				//Check whether admin login credentials valid or not
+				if(adminPageloginStatus == true)
+				{
+					addUserCreditPointsActions(driver);
+					adminLogin.adminPageLogoutActions(driver);
+					verifyActivityByWebUserView(driver);
+					//Verify Credited points
+		            //activity.userActivityInitialPage(driver);
+				}
+			 }
+		}
+		catch(Exception e)
+		{
+			log.info("Error in Initial Page");
+		}
+	}
+	
+	/**
+	 * Test Case for browsing all transactions
+	 * on correct data we can successfully Credit Points
+	 * Input: WebDriver
+	 * Ouptu: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void addUserCreditPointsActions(WebDriver driver) throws InvalidFormatException
+	{
+		rowCount= xllib.getRowCount("CreditPoints");
+		for (int i = 1; i <= rowCount; i++) 
+	   	{
+			try
+			{
+				financialInstitutionLoginEmail = xllib.getExcelData("CreditPoints", i, 0);
+				creditPoints=xllib.getExcelData("CreditPoints", i, 1);
+				creditDescription=xllib.getExcelData("CreditPoints", i, 2);
+				
+				driver.findElement(By.id("module_btn_browse_all_lifeusers")).click();
+				log.info("Searching for User Account");
+				Thread.sleep(3000);
+				driver.findElement(By.name("emailfilter")).clear();
+				driver.findElement(By.name("emailfilter")).sendKeys(financialInstitutionLoginEmail);
+				driver.findElement(By.xpath("//i[@ class='icon-search']")).click();
+				driver.findElement(By.xpath("//button[text()='Details']")).click();
+				driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='points']")).clear();
+	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='points']")).sendKeys(creditPoints);
+	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='description']")).clear();
+	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='description']")).sendKeys(creditDescription);
+	            driver.findElement(By.xpath("//button[text()='Credit Points']")).click();
+	            creditAlertAction(driver);
+	            
+	            allWindows = driver.getWindowHandles();
+				it = allWindows.iterator();
+				parent = (String) it.next();
+				child = (String) it.next();
+				driver.switchTo().window(child);
+	        }
+			catch(Exception e)
+			{
+				log.info("Transaction Search Failed");
+			}
+	   	}
+	}
+	
+	/**
+	 * Method for Credit Points Alert Message
+	 * on correct data we can successfully Credit Points
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void creditAlertAction(WebDriver driver) {
+		Alert alert = driver.switchTo().alert();
+		String creditSuccess = alert.getText();
+		alert.accept(); 
+		if(creditSuccess.equalsIgnoreCase(TestConstants.CREDIT_SUCCESS)){
+			log.info("Credit successfully");
+		}else{
+			log.info("Credit unsuccessfully");
+		}		
+	}
+	
+	/**
+	 * Method for Verify Activity by Web User View.
+	 * on correct data we can successfully view User Activity.
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void verifyActivityByWebUserView(WebDriver driver) {
+		
+		
+	}
+}

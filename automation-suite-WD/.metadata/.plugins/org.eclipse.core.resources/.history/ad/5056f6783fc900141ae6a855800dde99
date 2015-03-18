@@ -1,0 +1,535 @@
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+public class ManageMerchantRewardsTestHelper
+{
+	public static String adminLoginUrl=TestConstants.AdminLoginUrl;
+	private static String gmailURL=TestConstants.GmailUrl;
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	private static String gmailId;
+	private static String gmailPassword;
+	public static String type;
+	public static String status;
+	public static String captiveELoyaltyEnabled;
+	public static String publishedFromDate;
+	public static String publishedToDate;
+	public static String removedFromDate;
+	public static String removedToDate;
+	public static String merchant;
+	public static String merchantName;
+	public static String resultsPerPage;
+	public static String eLoyaltyStatus;
+	public static String description;
+	public static String value;
+	public static String points;
+	public static String filePath;
+	public static String merchantTitle;
+	public static String rewardType;
+	public static String fiLoginUrl;
+	public static String fiLoginEmail;
+	public static String fiLoginPassword;
+	public static String addRewardProceed;
+	public static String rewardSaveType;
+	public static String location;
+	private static int gmailCookieClearingflag=0;
+	
+	public int rowCount;
+	ExcelLib xllib = new ExcelLib();
+	private static Logger log = Logger.getLogger(AdminBrowseAllTransactionTestHelper.class);
+	
+	/**
+	 * Test Case for navigating to admin portal
+	 * Upon correct login data we can successfully login
+	 * @throws InvalidFormatException 
+	 */
+	public void merchantRewardsInitialPage(WebDriver driver) throws InvalidFormatException
+	{
+		rowCount= xllib.getRowCount("MerchantRewards");
+		for (int i = 1; i <= rowCount; i++) 
+	   	{
+			try
+			{
+				adminLoginEmail=xllib.getExcelData("MerchantRewards", i, 0);
+				adminLoginPassword=xllib.getExcelData("MerchantRewards", i, 1);
+				type = xllib.getExcelData("MerchantRewards", i, 2);
+				status = xllib.getExcelData("MerchantRewards", i, 3);
+				captiveELoyaltyEnabled = xllib.getExcelData("MerchantRewards", i, 4);
+				publishedFromDate = xllib.getExcelData("MerchantRewards", i, 5);
+				publishedToDate = xllib.getExcelData("MerchantRewards", i, 6);
+				removedFromDate = xllib.getExcelData("MerchantRewards", i, 7);
+				removedToDate = xllib.getExcelData("MerchantRewards", i, 8);
+				merchant = xllib.getExcelData("MerchantRewards", i, 9);
+				merchantName = xllib.getExcelData("MerchantRewards", i,10);
+				resultsPerPage=xllib.getExcelData("MerchantRewards", i,11);
+				addRewardProceed=xllib.getExcelData("MerchantRewards", i,12);
+				eLoyaltyStatus = xllib.getExcelData("MerchantRewards", i,13);
+				description = xllib.getExcelData("MerchantRewards", i,14);
+				value = xllib.getExcelData("MerchantRewards", i,15);
+				points = xllib.getExcelData("MerchantRewards", i,16);
+				rewardType=xllib.getExcelData("MerchantRewards", i,17);
+				filePath=xllib.getExcelData("MerchantRewards", i,18);
+				merchantTitle=xllib.getExcelData("MerchantRewards", i,19);
+				rewardSaveType=xllib.getExcelData("MerchantRewards", i,20);
+				fiLoginUrl=xllib.getExcelData("MerchantRewards", i,21);
+				fiLoginEmail=xllib.getExcelData("MerchantRewards", i,22);
+				fiLoginPassword=xllib.getExcelData("MerchantRewards", i,23);
+				location=xllib.getExcelData("MerchantRewards", i,24);
+				gmailId=xllib.getExcelData("MerchantRewards",i,25);
+				gmailPassword=xllib.getExcelData("MerchantRewards",i,26);
+				
+				log.info("----------------------------------------------------");
+	   			log.info("navigating to "+adminLoginUrl+"");
+				driver.get(adminLoginUrl);
+	   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+	   			driver.findElement(By.xpath("//input[@name='principal']")).sendKeys(adminLoginEmail);		
+				driver.findElement(By.xpath("//input[@name='password']")).sendKeys(adminLoginPassword);	
+				driver.findElement(By.xpath("//a[@id='signin']")).click();	
+				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);	
+				driver.findElement(By.xpath("//i[@class='icon-signout']")).isDisplayed();	
+				driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);	
+				log.info("Successfully logged into admin");
+				
+				merchantRewardsSearchActions(driver);
+				
+			}
+			catch(Exception e)
+			{
+				log.info("Test Case Failed");
+			}
+	   	}
+	}
+		
+	/**
+	 * Test Case for Managing Merchant Rewards
+	 * Upon correct data we can Search Merchant Rewards
+	 * Upon Uploading valid image file we can successful image file upload 
+	 * Redeem a newly created reward 
+	 * @throws InvalidFormatException 
+	 */
+	public void merchantRewardsSearchActions(WebDriver driver)
+	{
+		try
+		{	
+			log.info("Clicking on Manage Merchant Rewards Link");
+			driver.findElement(By.xpath("//a[@id='module_btn_manage_merchant_rewards']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			log.info("Merchant Rewards Search started");
+			WebElement typeValue = driver.findElement(By.xpath("//select[@name='typefilter']"));
+			Select st1 = new Select(typeValue);
+			st1.selectByVisibleText(type);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			WebElement statusValue = driver.findElement(By.xpath("//select[@name='statusfilter']"));
+   			Select st2 = new Select(statusValue);
+   			st2.selectByVisibleText(status);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			WebElement eLoyalty = driver.findElement(By.xpath("//select[@name='captiveELoyaltyEnabled']"));
+   			Select st3 = new Select(eLoyalty);
+			st3.selectByVisibleText(captiveELoyaltyEnabled);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			driver.findElement(By.xpath("//input[@id='published_start']")).clear();
+			driver.findElement(By.xpath("//input[@id='published_start']")).sendKeys(publishedFromDate);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			
+   			driver.findElement(By.xpath("//input[@id='published_end']")).clear();
+			driver.findElement(By.xpath("//input[@id='published_end']")).sendKeys(publishedToDate);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+   			driver.findElement(By.xpath("//input[@id='removed_start']")).clear();
+			driver.findElement(By.xpath("//input[@id='removed_start']")).sendKeys(removedFromDate);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			
+   			driver.findElement(By.xpath("//input[@id='removed_end']")).clear();
+			driver.findElement(By.xpath("//input[@id='removed_end']")).sendKeys(removedToDate);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			
+   			driver.findElement(By.xpath("//button[@class='btn dropdown-toggle']")).click();
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			
+   			driver.findElement(By.xpath("//input[@id='search-field']")).clear();
+			driver.findElement(By.xpath("//input[@id='search-field']")).sendKeys(merchantName);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+   			
+   			WebElement pageLength=driver.findElement(By.xpath("//select[@name='pagelength']"));
+			Select st4= new Select(pageLength);
+			st4.selectByVisibleText(resultsPerPage);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			driver.findElement(By.xpath("//a[@id='btnSearch']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("Merchant Rewards Search Ended");
+			
+			if(addRewardProceed.equalsIgnoreCase(TestConstants.ADD_REWARD_PROCEED))
+   			{
+   				addRewardDetails(driver);
+   	   			log.info("Adding Reward Details");
+   	   			
+			}
+   		}
+		catch(Exception e)
+		{
+			log.info("Test Case Failed");
+		}
+	}
+
+	public void addRewardDetails(WebDriver driver) throws InterruptedException 
+	{
+		try
+		{
+			driver.findElement(By.xpath("//a[@id='edit_merchant_reward']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("Finding Merchant");
+			driver.findElement(By.xpath("//a[text()='Find']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			//driver.findElement(By.xpath("//input[@id='merchantName']")).clear();
+			//driver.findElement(By.xpath("//input[@id='merchantName']")).sendKeys(merchantName);
+			driver.findElement(By.xpath("//input[@class='filter-search']")).clear();
+			driver.findElement(By.xpath("//input[@class='filter-search']")).sendKeys(merchantTitle);
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//i[@class='icon-search icon-white']")).click();
+			driver.findElement(By.xpath("//a[@class='btn btn-primary btn-small']")).click();
+			
+			WebElement captiveELoyalty=driver.findElement(By.xpath("//select[@id='captiveELoyaltyEnabled']"));
+			Select st5= new Select(captiveELoyalty);
+			st5.selectByVisibleText(eLoyaltyStatus);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//textarea[@name='description']")).clear();
+			driver.findElement(By.xpath("//textarea[@name='description']")).sendKeys(description);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//input[@class='input-mini ereward-readonly'][@name='value']")).clear();
+			driver.findElement(By.xpath("//input[@class='input-mini ereward-readonly'][@name='value']")).sendKeys(value);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			if(eLoyaltyStatus.equalsIgnoreCase(TestConstants.E_REWARD_ELIGIBLE)){
+				driver.findElement(By.xpath("//input[@id='eReward_setup_pointsvalue']")).clear();
+				driver.findElement(By.xpath("//input[@id='eReward_setup_pointsvalue']")).sendKeys(points);
+			}
+			
+			WebElement type2 = driver.findElement(By.xpath("//select[@id='rewardtype']"));
+			Select st6 = new Select(type2);
+			st6.selectByVisibleText(rewardType);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			if(type.equalsIgnoreCase(TestConstants.E_REWARD)){
+				driver.findElement(By.xpath("//a[text()='Automatic']")).click();
+				Thread.sleep(3000);
+			}
+			
+			log.info("Uploading image file");
+			driver.findElement(By.xpath("//input[@type='file']")).sendKeys(filePath);
+			Thread.sleep(5000);
+			
+			if(rewardSaveType.equalsIgnoreCase(TestConstants.REWARD_SAVE_TYPE_PUBLISH)){
+				log.info("Reward publishing");
+				driver.findElement(By.xpath("//a[@id='publish_reward']")).click();
+				Thread.sleep(5000);
+				Alert alert = driver.switchTo().alert();
+				alert.accept(); 
+				Thread.sleep(5000);
+				alert = driver.switchTo().alert();
+				String rewardSuccess = alert.getText();
+				alert.accept(); 
+				if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED)){
+					log.info("Reward successfully saved");
+				}else{
+					log.info("Reward not saved");
+				}
+				
+			}else if(rewardSaveType.equalsIgnoreCase(TestConstants.REWARD_SAVE_TYPE_DRAFT)){
+				log.info("Reward Saving to Draft");
+				driver.findElement(By.xpath("//a[@id='draft_reward']")).click();
+				Thread.sleep(5000);
+				Alert alert3 = driver.switchTo().alert();
+				String rewardSuccess = alert3.getText();
+				alert3.accept(); 
+				if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED)){
+					log.info("Reward successfully saved");
+				}else{
+					log.info("Reward not saved");
+				}
+			}
+			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+	   		redeemMerchantRewardActions(driver);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void redeemMerchantRewardActions(WebDriver driver) throws InterruptedException 
+	{
+		try{
+			
+			log.info("Navigating to "+fiLoginUrl+"");
+			driver.get(fiLoginUrl);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("login_principal")).clear();
+			driver.findElement(By.id("login_principal")).sendKeys(fiLoginEmail);	
+			driver.findElement(By.id("login_password")).clear();
+			driver.findElement(By.id("login_password")).sendKeys(fiLoginPassword);	
+			driver.findElement(By.id("login_button")).click();	
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//button[@id='content-close']")).click();
+			
+			/*
+			boolean isCloseButtonPresent = driver.findElement(By.xpath("//button[@id='content-close']")).isDisplayed();
+			if(isCloseButtonPresent)
+			{
+				
+			}
+			*/
+			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//span[contains(text(),'Businesses')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//input[@id='location']")).clear();
+			driver.findElement(By.xpath("//input[@id='location']")).sendKeys(location);
+			driver.findElement(By.xpath("//button[@id='locationGo']")).click();
+			//driver.findElement(By.xpath("//button[text()='Locate']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);	
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//div[contains(text(),'"+merchantTitle+"')]")).click();
+			driver.findElement(By.xpath("//span[contains(text(),'pts')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			String pointsBeforeRedeem = driver.findElement(By.xpath("//div[@id='field_points']/div")).getText();
+			//log.info("Points before Redemption is "+pointsBeforeRedeem+"");
+			log.info("Agree and Proceed Redemption");
+			driver.findElement(By.xpath("//a[contains(text(),'Agree and Proceed')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);	
+		
+			selectingCheckBox(driver);
+			
+			driver.findElement(By.xpath("//button[contains(text(),'Redeem')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//div[@class='modal-footer post_fb_buttons']/a[@class='btn']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(3000);
+			String pointsAfterRedeem = driver.findElement(By.xpath("//div[@id='field_points']/div")).getText();
+			//log.info("Points after Redemption is "+pointsAfterRedeem+"");
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//img[@id='fbphoto']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("View Rewards in My Purchases");
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//a[@id='show_myrewards_action_elem']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("View and print Rewards");
+			driver.findElement(By.xpath("//a[text()='(View & Print)']")).click();
+    		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    		driver.findElement(By.id("fbphoto")).click();
+			driver.findElement(By.id("logout")).click();
+			log.info("user Logging out");
+			Thread.sleep(5000);
+			
+			gmailConfirmation(driver);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			removeMerchantRewardActions(driver);
+			log.info("----------------------------------------------------");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void selectingCheckBox(WebDriver driver)
+	{
+		try
+		{
+			log.info("Selecting all terms if available for selected reward");
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[1]/input")).click();
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[2]/input")).click();
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[3]/input")).click();
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[4]/input")).click();
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[5]/input")).click();
+			driver.findElement(By.xpath(".//*[@class='reward_alerts']/div[6]/input")).click();
+			log.info("All terms are Accepted");
+			Thread.sleep(5000);
+		}
+		catch(Exception e)
+		{
+			log.info("All terms are Accepted");
+		}
+	}
+	
+	public void removeMerchantRewardActions(WebDriver driver)
+	{
+		try
+		{
+   			log.info("navigating to "+adminLoginUrl+"");
+			driver.get(adminLoginUrl);
+   			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("/html/body/div[3]/form[1]/input[1]")).sendKeys(adminLoginEmail);		
+			driver.findElement(By.xpath("/html/body/div[3]/form[1]/input[2]")).sendKeys(adminLoginPassword);	
+			driver.findElement(By.xpath("//a[@id='signin']")).click();	
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);	
+			driver.findElement(By.xpath("//i[@class='icon-signout']")).isDisplayed();	
+			driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);	
+			log.info("Successfully logged into admin");
+			
+			log.info("Clicking on Manage Merchant Rewards Link");
+			driver.findElement(By.xpath("//a[@id='module_btn_manage_merchant_rewards']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			WebElement statusValue = driver.findElement(By.xpath("//select[@name='statusfilter']"));
+   			Select st2 = new Select(statusValue);
+			st2.selectByVisibleText(status);
+   			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//input[@id='search-field']")).clear();
+			driver.findElement(By.xpath("//input[@id='search-field']")).sendKeys(merchantTitle);
+   			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			WebElement pageLength=driver.findElement(By.xpath("//select[@name='pagelength']"));
+			Select st4= new Select(pageLength);
+			st4.selectByVisibleText(resultsPerPage);
+   			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//a[@id='btnSearch']")).click();
+			log.info("Searching Merchant Reward");
+			Thread.sleep(4000);
+			driver.findElement(By.xpath("//a[contains(text(),'"+merchantTitle+"')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//a[@id='remove_reward']")).click();
+			
+			Thread.sleep(5000);
+			Alert alert1= driver.switchTo().alert();
+			alert1.accept();
+			Alert alert2= driver.switchTo().alert();
+			String removeRewardText =alert2.getText();
+			alert2.accept();
+			Thread.sleep(5000);
+			if(removeRewardText.equalsIgnoreCase(TestConstants.REWARD_SAVED))
+			{
+				log.info("Reward successfully removed");
+			}
+			else
+			{
+				log.info("Reward not removed");
+			}
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			redeemRemovedMerchantRewardActions(driver);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void redeemRemovedMerchantRewardActions(WebDriver driver) throws InterruptedException {
+		try{
+			
+			log.info("Navigating to "+fiLoginUrl+"");
+			driver.get(fiLoginUrl);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.findElement(By.id("login_principal")).clear();
+			driver.findElement(By.id("login_principal")).sendKeys(fiLoginEmail);	
+			driver.findElement(By.id("login_password")).clear();
+			driver.findElement(By.id("login_password")).sendKeys(fiLoginPassword);	
+			driver.findElement(By.id("login_button")).click();	
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			driver.findElement(By.xpath("//button[@id='content-close']")).click();
+			
+			/*
+			boolean isCloseButtonPresent = driver.findElement(By.xpath("//button[@id='content-close']")).isDisplayed();
+			if(isCloseButtonPresent){
+				
+			}
+			*/
+			
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//span[contains(text(),'Businesses')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//input[@id='location']")).clear();
+			driver.findElement(By.xpath("//input[@id='location']")).sendKeys(location);
+			driver.findElement(By.xpath("//button[@id='locationGo']")).click();
+			//driver.findElement(By.xpath("//button[text()='Locate']")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);	
+			Thread.sleep(5000);
+			driver.findElement(By.xpath("//div[contains(text(),'"+merchantTitle+"')]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("Searching reward points to redeem");
+			boolean  rewardsPoints = driver.findElement(By.xpath("//span[contains(text(),'pts')]")).isDisplayed();
+			if(!rewardsPoints){
+				log.info("Cannot redeem an erased Reward");
+			}else{
+				log.info("Redeem an erased Reward");
+			}
+			
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			driver.findElement(By.xpath("//span[@id='field_name']")).click();
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//a[text()='Log Out']")).click();
+			log.info("Logged out from "+fiLoginUrl+"");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void gmailConfirmation(WebDriver driver)
+	{
+		try
+		{
+			Thread.sleep(5000);
+			driver.get(gmailURL);
+			log.info("Navigating to Gmail for Confirmation of Gift Redeem");
+			driver.manage().window().maximize();
+			driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+			if(gmailCookieClearingflag==0)
+			{
+				driver.findElement(By.id("PersistentCookie")).click();
+			}
+			driver.findElement(By.id("Email")).clear();
+			driver.findElement(By.id("Email")).sendKeys(gmailId);
+			driver.findElement(By.id("Passwd")).clear();
+			driver.findElement(By.id("Passwd")).sendKeys(gmailPassword);
+			driver.findElement(By.id("signIn")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+			driver.findElement(By.xpath("/html/body/div[7]/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[2]/div[1]/div[1]/div/div/div[4]/div[1]/div/table/tbody/tr[1]/td[4]")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("Successfully Logged in into Gmail");
+			driver.findElement(By.xpath("//a[@class='gb_D gb_ea gb_i gb_aa']")).click();
+			driver.findElement(By.id("gb_71")).click();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			log.info("Logged out of Gmail");
+			
+			gmailCookieClearingflag++;
+			
+		}
+		catch(Exception e)
+		{
+			
+		}
+	}
+	
+}

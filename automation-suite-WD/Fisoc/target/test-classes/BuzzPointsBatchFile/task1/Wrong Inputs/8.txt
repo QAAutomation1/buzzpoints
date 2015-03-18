@@ -1,0 +1,16 @@
+[Install Progress]
+ Confirm Realtek Driver 
+ Check Operation System Version 
+ OS Information [WINMAJOR Number] = 6
+ OS Information [WINMAJOR String] = 6.1
+ OS Information [SYSINFO.nWinMajor] = 6
+ OS Information [SYSINFO.nWinMinor] = 1
+ OS Information [IsWin2000] = 0
+ OS Information [IsWinXP] = 0
+ OS Information [IsWin2003] = 0
+ OS Information [IsVista] = 0
+ OS Information [IsWin2008] = 0
+ OS Information [IsWin7] = 1
+ OS Information [IsWin2008R2x64] = 0
+ OS Information [IsMCE] = 1
+ OS Information [IsServer] = 0

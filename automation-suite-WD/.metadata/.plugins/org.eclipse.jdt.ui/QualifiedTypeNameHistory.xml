@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="org.apache.poi.openxml4j.exceptions.InvalidFormatException"/>
+<fullyQualifiedTypeName name="com.fisoc.user.helpers.UserSignUpBankTestHelper"/>
+<fullyQualifiedTypeName name="com.fisoc.admin.helpers.AdminPageLoginHelper"/>
+<fullyQualifiedTypeName name="com.fisoc.user.helpers.UserPageLoginHelper"/>
+<fullyQualifiedTypeName name="com.fisoc.admin.helpers.UploadFinancialInstituteBatchFileTestHelper"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.WebDriver"/>
+<fullyQualifiedTypeName name="org.testng.annotations.BeforeTest"/>
+<fullyQualifiedTypeName name="org.testng.annotations.AfterTest"/>
+<fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
+<fullyQualifiedTypeName name="com.fisoc.util.DriverManager"/>
+<fullyQualifiedTypeName name="com.fisoc.util.BaseClass"/>
+<fullyQualifiedTypeName name="com.fisoc.admin.helpers.SetUpMerchanteRewardTestHelper"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.support.ui.Select"/>
+<fullyQualifiedTypeName name="com.fisoc.constants.TestConstants"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.Alert"/>
+<fullyQualifiedTypeName name="java.lang.Boolean"/>
+<fullyQualifiedTypeName name="com.fisoc.admin.helpers.SetUpMerchanteCaptiveLoyaltyCardTestHelper"/>
+<fullyQualifiedTypeName name="com.fisoc.user.helpers.RedeemMerchanteRewardTestHelper"/>
+<fullyQualifiedTypeName name="com.fisoc.admin.helpers.AddUserCreditpointsTestHelper"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.By"/>
+<fullyQualifiedTypeName name="com.sun.tools.javac.util.List"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.WebElement"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.fisoc.user.helpers.UserActivityPageTestHelper"/>
+<fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
+<fullyQualifiedTypeName name="java.text.DateFormat"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+</qualifiedTypeNameHistroy>

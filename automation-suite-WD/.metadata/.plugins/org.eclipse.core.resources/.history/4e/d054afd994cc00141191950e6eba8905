@@ -1,0 +1,193 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/06/2015
+ * @Updated Date :03/17/2015
+ * @Comments This automation class will serve the Admin Login and set up Merchant eCaptive Loyalty Card.
+ */
+package com.fisoc.admin.helpers;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+
+import com.fisoc.constants.TestConstants;
+import com.fisoc.util.ExcelLib;
+
+public class SetUpMerchanteCaptiveLoyaltyCardTestHelper 
+{
+	public static String adminLoginEmail;
+	public static String adminLoginPassword;
+	public int rowCount;
+	public static String merchantName;
+	public static String resultsPerPage;
+	public static String eLoyaltyCardCompletion;
+	public static String description;
+	public static String value;
+	public static String points;
+	public static String filePath;
+	public static String merchantTitle;
+	public static String rewardType;
+	public static String rewardSaveType;
+	ExcelLib xllib = new ExcelLib();
+	private static Logger log = Logger.getLogger(SetUpMerchanteCaptiveLoyaltyCardTestHelper.class);
+	AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
+	
+	/**
+	 * Test Case for Reading the excel data and login into the admin portal
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void setUpMerchantLoyaltyCardInitialPage(WebDriver driver)
+	{
+		try
+		{
+			 rowCount= xllib.getRowCount("AdminLogin");
+			 for (int i = 1; i <= rowCount; i++) 
+			 {
+				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
+				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1);
+						
+				Boolean adminPageLoginStatus = adminLogin.adminPageLoginActions(driver,adminLoginEmail,adminLoginPassword);
+				//Check admin login status
+				if(adminPageLoginStatus == true)
+				{
+					setUpMerchantLoyaltyCardActions(driver);
+					driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+					adminLogin.adminPageLogoutActions(driver);					
+				}
+			 }
+		}
+		catch(Exception e)
+		{
+			log.info("Test case failed to execute");
+		}
+	}
+	
+	/**
+	 * Test Case for adding Merchant eCaptive Loyalty Card.
+	 * on correct data we can successfully add Merchant eCaptive Loyalty Card
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void setUpMerchantLoyaltyCardActions(WebDriver driver) throws InvalidFormatException
+	{
+		try
+		{
+			int rowCount =xllib.getRowCount("SetUpMerchanteReward");
+			for (int i=1;i<=rowCount;i++)
+			{
+				merchantTitle=xllib.getExcelData("SetUpMerchanteReward", i,0);
+				eLoyaltyCardCompletion = xllib.getExcelData("SetUpMerchanteReward", i,1);
+				description = xllib.getExcelData("SetUpMerchanteReward", i,2);
+				value = xllib.getExcelData("SetUpMerchanteReward", i,3);
+				points = xllib.getExcelData("SetUpMerchanteReward", i,4);
+				rewardType=xllib.getExcelData("SetUpMerchanteReward", i,5);
+				filePath=xllib.getExcelData("SetUpMerchanteReward", i,6);
+				rewardSaveType=xllib.getExcelData("SetUpMerchanteReward", i,7);
+				
+				log.info("Browsing all Merchants");	
+				driver.findElement(By.id("module_btn_browse_all_merchants")).click();
+				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				
+				/*driver.findElement(By.xpath("//a[contains(text(),'Filter')]")).click();
+				driver.findElement(By.xpath("//ul[@id='search_filter']")).click();
+				driver.findElement(By.xpath("//li[@name='statusfilter']")).click();
+				WebElement filterValue = driver.findElement(By.xpath("//ul[@id='search_filter']"));
+				Select st = new Select(filterValue);
+				st.selectByIndex(2);*/
+								
+				driver.findElement(By.name("namefilter")).clear();
+				driver.findElement(By.name("namefilter")).sendKeys(merchantName);
+				driver.findElement(By.id("btnSearch")).click();
+				driver.findElement(By.xpath("//a[contains(text(),'"+merchantName+"')]")).click();
+				driver.findElement(By.xpath("//a[@href='loyalty-card']")).click();
+				log.info("Loyalty card updating");	
+							
+				boolean isCheckBoxChecked = driver.findElement(By.id("has_loyalty_card_checkbox")).isSelected();
+				if(!isCheckBoxChecked){
+					driver.findElement(By.id("has_loyalty_card_checkbox")).click();
+				}
+				
+				driver.findElement(By.id("loyaltycard_slots")).clear();
+				driver.findElement(By.id("loyaltycard_slots")).sendKeys(numOfTransactions);
+								
+				/*driver.findElement(By.xpath("//input[@id='loyaltycard_points']")).clear();
+				driver.findElement(By.xpath("//input[@id='loyaltycard_points']")).sendKeys(pointsAwarded);*/
+				
+				driver.findElement(By.id("isCapitiveELoyalty")).click();
+				WebElement loyaltyCardValue = driver.findElement(By.id("loyaltycard_offer"));
+				Select st6= new Select(loyaltyCardValue);
+				st6.selectByIndex(1);
+				
+				driver.findElement(By.id("loyaltycard_minAmount")).clear();
+				driver.findElement(By.id("loyaltycard_minAmount")).sendKeys(minTransactionAmount);
+				
+				driver.findElement(By.xpath("//input[@id='loyaltycard_startDate']")).clear();
+				driver.findElement(By.xpath("//input[@id='loyaltycard_startDate']")).sendKeys(eLoyaltyStartDate);
+				
+				/*driver.findElement(By.xpath("//input[@id='loyaltycard_endDate']")).clear();
+				driver.findElement(By.xpath("//input[@id='loyaltycard_endDate']")).sendKeys(eLoyaltyEndDate);*/
+				
+				driver.findElement(By.xpath("//button[@id='edit_merchant_save']")).click();
+				log.info("Loyalty card saved");	
+			}
+		}
+		catch(Exception e)
+		{
+			log.info("Reward failed to save");
+		}
+	}
+	
+	/**
+	 * Test Case for publishing Merchant eReward
+	 * on correct data we can successfully publish eReward
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void eRewardPublishAction(WebDriver driver) 
+	{		
+		log.info("Reward publishing");
+		driver.findElement(By.id("publish_reward")).click();
+		Alert alert = driver.switchTo().alert();
+		alert.accept(); 
+		alert = driver.switchTo().alert();
+		String rewardSuccess = alert.getText();
+		alert.accept(); 
+		if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED))
+		{
+			log.info("Reward successfully saved");
+		}
+		else
+		{
+			log.info("Reward not saved");
+		}
+	}
+	
+	/**
+	 * Test Case for saving Merchant eReward to draft
+	 * on correct data we can successfully save to draft
+	 * Input: WebDriver
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */
+	public void eRewardSaveToDraftAction(WebDriver driver) {
+		log.info("Reward Saving to Draft");
+		driver.findElement(By.xpath("//a[@id='draft_reward']")).click();
+		Alert alert3 = driver.switchTo().alert();
+		String rewardSuccess = alert3.getText();
+		alert3.accept(); 
+		if(rewardSuccess.equalsIgnoreCase(TestConstants.REWARD_SAVED)){
+			log.info("Reward successfully saved");
+		}else{
+			log.info("Reward not saved");
+		}		
+	}
+}

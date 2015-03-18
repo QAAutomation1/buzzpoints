@@ -1,0 +1,127 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/13/2015
+ * @Comments This util class is used to read data from excel,write into excel and counting number of rows in excel. 
+ */
+package com.fisoc.util;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+public class ExcelLib 
+{
+		/**
+		 * Method is used to read data from excel
+		 * Input: Sheet Name, Row Number, Cell Number
+		 * Output: String
+		*/
+		public String getExcelData(String sheetName,int rowNum,int cellNum) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+		{
+			String retVal=null;
+			try 
+			{
+				FileInputStream fis = new FileInputStream("./src/test/resources/excelData/Data.xls");
+				Workbook wb = WorkbookFactory.create(fis);
+				Sheet s = wb.getSheet(sheetName);
+				Row r = s.getRow(rowNum);	
+				Cell c = r.getCell(cellNum);
+				
+				if(c == null)
+				{
+					retVal = "";
+				} 
+				else
+				{
+					if(c.getCellType() == Cell.CELL_TYPE_NUMERIC)
+					{
+						retVal = String.valueOf((long)c.getNumericCellValue());
+					}
+					else if(c.getCellType() == Cell.CELL_TYPE_STRING)
+					{		
+						retVal = c.getStringCellValue();
+					}
+					else if(c.getCellType() == Cell.CELL_TYPE_BLANK)
+					{
+						retVal = "";
+					}
+				}
+				
+				
+			} 
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (InvalidFormatException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			return retVal;
+		}
+		
+		public int getRowCount(String sheetName) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+		{
+			int rowCount=0;
+			try 
+			{
+				FileInputStream fis = new FileInputStream("./src/test/resources/excelData/Data.xls");
+				Workbook wb = WorkbookFactory.create(fis);
+				Sheet s = wb.getSheet(sheetName);		
+				rowCount = s.getLastRowNum();
+			}
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (InvalidFormatException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			return rowCount;
+		}		
+		public void writeToExcel(String sheetName, int rowNum, int cellNum, String data) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+		{
+			try 
+			{
+				FileInputStream fis = new FileInputStream("./src/test/resources/excelData/Data.xlsx");
+				Workbook wb = WorkbookFactory.create(fis);
+				Sheet s = wb.getSheet(sheetName);
+				Row r = s.createRow(rowNum);
+				Cell c = r.createCell(cellNum);
+				c.setCellValue(data);
+				FileOutputStream fos = new FileOutputStream("./src/test/resources/excelData/Data.xlsx");
+				wb.write(fos);
+			}
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (InvalidFormatException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		}	
+		
+		
+}

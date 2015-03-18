@@ -1,0 +1,31 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :03/09/2015
+ * @Updated Date :03/17/2015
+ * @Comments :This automation class will login into admin portal and add Credit Points to User.
+ */
+package com.fisoc.admin;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.testng.annotations.Test;
+
+import com.fisoc.admin.helpers.AddUserCreditpointsTestHelper;
+import com.fisoc.admin.helpers.AdminBrowseAllTransactionTestHelper;
+import com.fisoc.util.BaseClass;
+
+public class AddUserCreditPointsTest extends BaseClass
+{
+	/**
+	 * Test Case for searching different Transactions
+	 * based on the test data inputs.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException, InterruptedException 
+	 */	 
+	 @Test(groups = { "Regression" ,"Functional","Smoke", "AdminSiteRegression"})
+	 public void adminBrowseAllTransactions() throws InvalidFormatException, InterruptedException
+	 {
+		 AddUserCreditpointsTestHelper creditPointsHelper = new AddUserCreditpointsTestHelper();
+		 creditPointsHelper.browseAllTransactionInitialPage(driver);
+	}
+}

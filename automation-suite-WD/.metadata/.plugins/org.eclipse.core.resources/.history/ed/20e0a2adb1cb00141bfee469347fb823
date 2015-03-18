@@ -1,0 +1,9 @@
+package com.fisoc.admin;
+
+import org.testng.annotations.Test;
+
+public class UploadFinancialInstitutionBatchFileTest {
+  @Test
+  public void f() {
+  }
+}

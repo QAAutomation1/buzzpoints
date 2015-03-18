@@ -1,0 +1,34 @@
+/**
+ * @author: Basappa Hunsikatti
+ * @Created Date :02/02/2015
+ * @Updated Date :03/16/2015
+ * @Comments:This automation class will serve to select the browser and load the user login page.
+ */
+package com.fisoc.user;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Test;
+import com.fisoc.constants.TestConstants;
+import com.fisoc.user.helpers.UserSignUpBankTestHelper;
+import com.fisoc.util.DriverManager;
+import com.fisoc.util.ExcelLib;
+
+public class UserSignUpBankTest
+{
+	/**
+	 * Test Case for user sign up bank.
+	 * based on the test data inputs.
+	 * login in to the user application.
+	 * Input: No parameter
+	 * Output: Void
+	 * @throws InvalidFormatException 
+	 */	 
+	 @Test(dependsOnMethods={"browserSetup"})
+	 public void userSignupBankTest() throws InvalidFormatException
+	 {
+		 UserSignUpBankTestHelper signUpBank = new UserSignUpBankTestHelper();
+		 signUpBank.userSignUpBankActions(driver);
+	 }
+}
