@@ -10,6 +10,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.testng.annotations.Test;
 
 import com.fisoc.user.helpers.RedeemMerchanteRewardTestHelper;
+import com.fisoc.user.helpers.UserActivityPageTestHelper;
 import com.fisoc.util.BaseClass;
 
 public class RedeemMerchanteRewardTest extends BaseClass

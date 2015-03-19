@@ -1,36 +1,32 @@
 /**
  * @author: Basappa Hunsikatti
  * @Created Date :03/09/2015
- * @Updated Date :03/18/2015
- * @Comments This automation class will login into admin portal and add Credit Points to Merchant.
+ * @Updated Date :03/20/2015
+ * @Comments This automation class will login into admin portal and Complete eCaptive Loyalty Card Transaction.
  */
 package com.fisoc.admin.helpers;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
 import com.fisoc.constants.TestConstants;
 import com.fisoc.user.helpers.UserActivityPageTestHelper;
 import com.fisoc.user.helpers.UserLoginPageTestHelper;
 import com.fisoc.util.ExcelLib;
 
-public class AddUserCreditpointsTestHelper 
+public class CompleteeCaptiveLoyaltyCardTransactionTestHelper 
 {
 	public static String adminLoginEmail;
 	public static String adminLoginPassword;
 	public static String creditPoints;
 	public static String creditDescription;
 	public static String financialInstitutionLoginEmail;
+	public static Boolean adminPageloginStatus;
 	Set<String> allWindows;
 	static Iterator<String> it;
 	static String parent;
@@ -39,15 +35,14 @@ public class AddUserCreditpointsTestHelper
 	ExcelLib xllib = new ExcelLib();
 	UserLoginPageTestHelper userLogout = new UserLoginPageTestHelper();
 	UserActivityPageTestHelper activity = new UserActivityPageTestHelper();
-	private static Logger log = Logger.getLogger(AddUserCreditpointsTestHelper.class);
+	private static Logger log = Logger.getLogger(CompleteeCaptiveLoyaltyCardTransactionTestHelper.class);
 	
 	/**
 	 * Test Case for Reading the excel data and login into the admin
-	 * portal on successful we can Credit Points
 	 * Input: WebDriver
 	 * Output: Void
 	 */
-	public void addUserCreditPointsInitialPage(WebDriver driver)
+	public void loyaltyCardTransactionInitialPage(WebDriver driver)
 	{
 		try
 		{
@@ -57,11 +52,11 @@ public class AddUserCreditpointsTestHelper
 			 {
 				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
 				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1); 
-				Boolean adminPageloginStatus = adminLogin.adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
+				adminPageloginStatus = adminLogin.adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
 				//Check whether admin login credentials valid or not
 				if(adminPageloginStatus == true)
 				{
-					addUserCreditPointsActions(driver);
+					loyaltyCardTransactionActions(driver);
 					adminLogin.adminPageLogoutActions(driver);
 				}
 			 }
@@ -74,12 +69,12 @@ public class AddUserCreditpointsTestHelper
 	
 	/**
 	 * Test Case for browsing all transactions
-	 * on correct data we can successfully Credit Points
+	 * on correct data we can successfully Complete eCaptive Loyalty Card Transaction.
 	 * Input: WebDriver
 	 * Ouptu: Void
 	 * @throws InvalidFormatException 
 	 */
-	public void addUserCreditPointsActions(WebDriver driver) throws InvalidFormatException
+	public void loyaltyCardTransactionActions(WebDriver driver) throws InvalidFormatException
 	{
 		rowCount= xllib.getRowCount("CreditPoints");
 		for (int i = 1; i <= rowCount; i++) 

@@ -12,7 +12,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import com.fisoc.admin.helpers.AddUserCreditPointsTestHelper;
+import com.fisoc.admin.helpers.AddUserCreditpointsTestHelper;
 import com.fisoc.constants.TestConstants;
 import com.fisoc.util.ExcelLib;
 
@@ -29,7 +29,7 @@ public class RedeemMerchanteRewardTestHelper
 	 ExcelLib xllib = new ExcelLib();
 	 TestConstants constants = new TestConstants();
 	 UserLoginPageTestHelper userLogin = new UserLoginPageTestHelper();
-	 AddUserCreditPointsTestHelper creditPointsHelper = new AddUserCreditPointsTestHelper();
+	 AddUserCreditpointsTestHelper creditPointsHelper = new AddUserCreditpointsTestHelper();
 	 FaceBookLoginPageTestHelper faceBook = new FaceBookLoginPageTestHelper();
 	 private static Logger log = Logger.getLogger(UserLoginPageTestHelper.class);
 	 
