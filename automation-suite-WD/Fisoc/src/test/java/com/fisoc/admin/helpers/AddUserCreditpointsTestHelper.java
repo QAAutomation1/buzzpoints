@@ -105,8 +105,8 @@ public class AddUserCreditpointsTestHelper
 	            
 	            creditAlertAction(driver);
 	            Thread.sleep(5000);
-	            verifyActivityByWebUserView(driver);
-	            userLogout.userLogoutPageActions(driver);
+	           // verifyActivityByWebUserView(driver);
+	           //userLogout.userLogoutPageActions(driver);
 	        }
 			catch(Exception e)
 			{

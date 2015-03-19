@@ -7,12 +7,12 @@
 package com.fisoc.user.helpers;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import com.fisoc.admin.helpers.AddUserCreditpointsTestHelper;
 import com.fisoc.constants.TestConstants;
 import com.fisoc.util.ExcelLib;
 
@@ -24,10 +24,13 @@ public class RedeemMerchanteRewardTestHelper
 	 public static String financialInstitutionUrl;
 	 public static String merchantTitle;
 	 public static String location;
+	 public static String postOnFacebook;
 	 boolean present;
 	 ExcelLib xllib = new ExcelLib();
 	 TestConstants constants = new TestConstants();
 	 UserLoginPageTestHelper userLogin = new UserLoginPageTestHelper();
+	 AddUserCreditpointsTestHelper creditPointsHelper = new AddUserCreditpointsTestHelper();
+	 FaceBookLoginPageTestHelper faceBook = new FaceBookLoginPageTestHelper();
 	 private static Logger log = Logger.getLogger(UserLoginPageTestHelper.class);
 	 
 	 /**
@@ -75,8 +78,9 @@ public class RedeemMerchanteRewardTestHelper
 			int rowCount = xllib.getRowCount("UserLogin");
 			for(int i=1;i<= rowCount;i++)
 			{
-				merchantTitle=xllib.getExcelData("SetUpMerchanteReward", i,0);
-				location=xllib.getExcelData("SetUpMerchanteReward", i,8);
+				merchantTitle = xllib.getExcelData("SetUpMerchanteReward", i,0);
+				location = xllib.getExcelData("SetUpMerchanteReward", i,8);
+				postOnFacebook = xllib.getExcelData("SetUpMerchanteReward", i,11);
 				
 				driver.findElement(By.id("location")).clear();
 				driver.findElement(By.id("location")).sendKeys(location);
@@ -97,12 +101,30 @@ public class RedeemMerchanteRewardTestHelper
 				driver.findElement(By.xpath("//a[contains(text(),'Agree and Proceed')]")).click();
 					
 				//Select the Check boxes to Redeem Reward.
-				List<WebElement> checkBoxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
-				for (int j = 0; j < checkBoxes.size(); j++) {
-					checkBoxes.get(j).click();
-				}
-			
+				selectAllCheckBoxes(driver);
+						
 				driver.findElement(By.xpath("//button[contains(text(),'Redeem')]")).click();
+				Boolean insufficientPointsPresent= driver.findElement(By.xpath("//p[contains(text(),'You do not have enough points.')]")).isDisplayed();
+				
+				
+				/*Alert alert = driver.switchTo().alert();
+				String lessRewardPointsText = alert.getText();
+				alert.accept(); */
+				
+				if(insufficientPointsPresent){
+					creditPointsHelper.addUserCreditPointsActions(driver);
+					redeemRewardPoints(driver);
+				}else if(postOnFacebook.equalsIgnoreCase("Yes")){
+					driver.findElement(By.id("redeem_fbconnect")).click();
+					faceBook.postOnFaceBookLoginActions(driver);
+					faceBook.postOnFaceBookLogoutActions(driver);
+				}else if(postOnFacebook.equalsIgnoreCase("No")){
+					//skipFacebookPost(driver);
+				}else{
+					redeemRewardPoints(driver);
+				}
+				
+							
 				driver.findElement(By.xpath("//div[@class='modal-footer post_fb_buttons']/a[@class='btn']")).click();
 				String pointsAfterRedeem = driver.findElement(By.xpath("//div[@id='field_points']/div")).getText();
 				log.info("Points after Redemption is "+pointsAfterRedeem+"");
@@ -126,22 +148,23 @@ public class RedeemMerchanteRewardTestHelper
 	}
 	
 	/**
-	 * Test Case for log out from the user page
+	 * Method for Selecting all the Check boxes to Redeem Reward.
 	 * Input: WebDriver
 	 * Output: Void
 	 */
-	public void userLogoutPageActions(WebDriver driver) throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
-	{
-		try
-		{
-			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-			driver.findElement(By.id("fbphoto")).click();
-			driver.findElement(By.id("logout")).click();
-			log.info("Successful Logout from User Page");
+	public void selectAllCheckBoxes(WebDriver driver) {
+		List<WebElement> checkBoxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+		for (int j = 0; j < checkBoxes.size(); j++) {
+			checkBoxes.get(j).click();
 		}
-		catch(Exception e)
-		{
-			log.info("Error in User Logout");
-		}	
+	}
+	
+	/**
+	 * Method for Redeem Reward Points
+	 * Input: WebDriver
+	 * Output: Void
+	 */
+	public void redeemRewardPoints(WebDriver driver) {
+		
 	}
 }

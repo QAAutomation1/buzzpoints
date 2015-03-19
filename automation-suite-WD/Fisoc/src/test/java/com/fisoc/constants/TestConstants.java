@@ -47,7 +47,8 @@ public class TestConstants
 	public static final String FI_CLOSE_BUTTON = "Close";
 	public static final String NOT_ENOUGH_POINTS_REDEMPTION = "Unable to Process Your Redemption";
 	public static final String CREDIT_SUCCESS = "Credit successful";
-	
+	public static final String LESS_REWARD_POINTS = "Unable to Process Your Redemption";
+	public static final String YES = "Yes";
 	
 	/**
 	 * Method for adding Financial Institution Name in Financial Institution Url
