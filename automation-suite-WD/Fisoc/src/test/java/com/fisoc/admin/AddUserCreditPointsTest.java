@@ -8,7 +8,7 @@ package com.fisoc.admin;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.testng.annotations.Test;
-import com.fisoc.admin.helpers.AddUserCreditpointsTestHelper;
+import com.fisoc.admin.helpers.AddUserCreditPointsTestHelper;
 import com.fisoc.util.BaseClass;
 
 public class AddUserCreditPointsTest extends BaseClass
@@ -23,7 +23,7 @@ public class AddUserCreditPointsTest extends BaseClass
 	 @Test(groups = { "Regression" ,"Functional","Smoke", "AdminSiteRegression"})
 	 public void addUserCreditPointsTest() throws InvalidFormatException, InterruptedException
 	 {
-		 AddUserCreditpointsTestHelper creditPointsHelper = new AddUserCreditpointsTestHelper();
+		 AddUserCreditPointsTestHelper creditPointsHelper = new AddUserCreditPointsTestHelper();
 		 creditPointsHelper.addUserCreditPointsInitialPage(driver);
 	}
 }

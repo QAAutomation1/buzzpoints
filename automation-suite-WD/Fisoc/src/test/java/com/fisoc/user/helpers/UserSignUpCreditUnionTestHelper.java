@@ -1,9 +1,3 @@
-/**
- * @author: Basappa Hunsikatti
- * @Created Date :03/06/2015
- * @Updated Date :03/16/2015
- * @Comments:This automation class will serve the User Login Page and sign up for bank.
- */
 package com.fisoc.user.helpers;
 
 import java.util.concurrent.TimeUnit;
@@ -18,46 +12,48 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.fisoc.constants.TestConstants;
 import com.fisoc.util.ExcelLib;
 
-public class UserSignUpBankTestHelper 
+public class UserSignUpCreditUnionTestHelper 
 {
+
 	public static String signUpUrl;
 	public static String signUpFullName;
 	public static String signUpEmail;
 	public static String signUpPassword;
 	public static String signUpConfirmPassword;
-	public static String signUpAccountNo;
+	public static String signUpMemberNo;
 	public static String signUpSSN;
 	public static String signUpPromoCode;
 	public static String financialInstitutionName;
 	public static String financialInstitutionUrl;
 	public int rowCount;
-	private static Logger log = Logger.getLogger(UserSignUpBankTestHelper.class);
+	private static Logger log = Logger.getLogger(UserSignUpCreditUnionTestHelper.class);
 	TestConstants constants = new TestConstants();
 	ExcelLib xllib = new ExcelLib();
 	
+
 	/**
-	 * Test Case for sign up bank
-	 * on correct data we can successfully sign up for bank.
+	 * Test Case for sign up Credit union
+	 * on correct data we can successfully sign up for credit union account.
 	 * Input: WebDriver
 	 * Output: Void
 	 * @throws InvalidFormatException 
 	 */
-	public void userSignUpBankActions(WebDriver driver) throws InvalidFormatException
+	public void userSignUpCUActions(WebDriver driver) throws InvalidFormatException
 	{
-		rowCount = xllib.getRowCount("SignUpBank");
+		rowCount = xllib.getRowCount("SignUpCU");
     	for (int i = 1; i <= rowCount; i++) 
     	{
     		try
     		{
     			log.info("Checking on "+i+"th row value");
-    			financialInstitutionName = xllib.getExcelData("SignUpBank",i,0);      		  	
-    			signUpFullName = xllib.getExcelData("SignUpBank",i,1);
-    			signUpEmail = xllib.getExcelData("SignUpBank",i,2);
-    			signUpPassword = xllib.getExcelData("SignUpBank",i,3);
-    			signUpConfirmPassword = xllib.getExcelData("SignUpBank",i,4);
-    			signUpAccountNo = xllib.getExcelData("SignUpBank",i,5);
-    			signUpSSN = xllib.getExcelData("SignUpBank",i,6);
-    			signUpPromoCode = xllib.getExcelData("SignUpBank",i,7);
+    			financialInstitutionName = xllib.getExcelData("SignUpCU",i,0);      		  	
+    			signUpFullName = xllib.getExcelData("SignUpCU",i,1);
+    			signUpEmail = xllib.getExcelData("SignUpCU",i,2);
+    			signUpPassword = xllib.getExcelData("SignUpCU",i,3);
+    			signUpConfirmPassword = xllib.getExcelData("SignUpCU",i,4);
+    			signUpMemberNo = xllib.getExcelData("SignUpCU",i,5);
+    			signUpSSN = xllib.getExcelData("SignUpCU",i,6);
+    			signUpPromoCode = xllib.getExcelData("SignUpCU",i,7);
     			
     			financialInstitutionUrl = constants.financialInstitutionUrlConvertActions(financialInstitutionName);
     			driver.get(financialInstitutionUrl);
@@ -73,8 +69,8 @@ public class UserSignUpBankTestHelper
     			driver.findElement(By.id("password")).sendKeys(signUpPassword);
     			driver.findElement(By.id("passwordRep")).clear();
     			driver.findElement(By.id("passwordRep")).sendKeys(signUpConfirmPassword);    			
-    			driver.findElement(By.id("acctNum")).clear();
-    			driver.findElement(By.id("acctNum")).sendKeys(signUpAccountNo);
+    			driver.findElement(By.id("memberNum")).clear();
+    			driver.findElement(By.id("memberNum")).sendKeys(signUpMemberNo);
     			driver.findElement(By.id("ssn")).clear();
     			driver.findElement(By.id("ssn")).sendKeys(signUpSSN);
     			driver.findElement(By.id("promoCode")).clear();
@@ -103,8 +99,6 @@ public class UserSignUpBankTestHelper
     	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("verifyHomeAddress_asklater")));
         			driver.findElement(By.id("verifyHomeAddress_asklater")).click();
         	    	log.info("First time signing in to account");
-    	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fbconnect_skip")));
-        			driver.findElement(By.id("fbconnect_skip")).click();
     	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fbphoto")));
         			driver.findElement(By.id("fbphoto")).click();
     	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout")));

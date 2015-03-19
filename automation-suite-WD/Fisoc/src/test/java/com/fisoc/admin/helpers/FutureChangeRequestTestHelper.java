@@ -8,13 +8,14 @@ package com.fisoc.admin.helpers;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.log4testng.Logger;
+
 import com.fisoc.constants.TestConstants;
 import com.fisoc.util.ExcelLib;
 

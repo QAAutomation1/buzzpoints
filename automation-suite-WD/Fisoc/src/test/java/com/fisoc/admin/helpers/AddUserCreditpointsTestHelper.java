@@ -6,9 +6,6 @@
  */
 package com.fisoc.admin.helpers;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +21,7 @@ import com.fisoc.user.helpers.UserActivityPageTestHelper;
 import com.fisoc.user.helpers.UserLoginPageTestHelper;
 import com.fisoc.util.ExcelLib;
 
-public class AddUserCreditpointsTestHelper 
+public class AddUserCreditPointsTestHelper 
 {
 	public static String adminLoginEmail;
 	public static String adminLoginPassword;
@@ -39,7 +36,7 @@ public class AddUserCreditpointsTestHelper
 	ExcelLib xllib = new ExcelLib();
 	UserLoginPageTestHelper userLogout = new UserLoginPageTestHelper();
 	UserActivityPageTestHelper activity = new UserActivityPageTestHelper();
-	private static Logger log = Logger.getLogger(AddUserCreditpointsTestHelper.class);
+	private static Logger log = Logger.getLogger(AddUserCreditPointsTestHelper.class);
 	
 	/**
 	 * Test Case for Reading the excel data and login into the admin
