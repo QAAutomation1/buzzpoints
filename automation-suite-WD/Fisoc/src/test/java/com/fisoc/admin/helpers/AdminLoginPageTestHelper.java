@@ -7,11 +7,9 @@
 package com.fisoc.admin.helpers;
 
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
 import com.fisoc.constants.TestConstants;
 import com.fisoc.util.ExcelLib;
 
@@ -67,12 +65,12 @@ public class AdminLoginPageTestHelper
 		try
 		{
 			driver.get(adminLoginUrl);
-			log.info("********************************");
+			log.info("********************************************");
 			log.info("navigating to "+adminLoginUrl+"");
 			//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			driver.findElement(By.name("principal")).clear();		
-			driver.findElement(By.name("password")).clear();	
-			driver.findElement(By.name("principal")).sendKeys(adminLoginEmail);	
+			driver.findElement(By.name("principal")).sendKeys(adminLoginEmail);
+			driver.findElement(By.name("password")).clear();
 			driver.findElement(By.name("password")).sendKeys(adminLoginPassword);	
 			driver.findElement(By.id("signin")).click();
 
@@ -106,9 +104,9 @@ public class AdminLoginPageTestHelper
 	{
 		try
 		{
-			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			driver.findElement(By.xpath("//a[@bindaction='buzzapp.inside.logout']")).click();
 			log.info("Successful Logout from Admin Page");
+			log.info("********************************************");
 		}
 		catch(Exception e)
 		{

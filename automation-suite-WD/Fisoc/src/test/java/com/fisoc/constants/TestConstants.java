@@ -6,6 +6,8 @@
  */
 package com.fisoc.constants;
 
+import org.openqa.selenium.WebDriver;
+
 /**
 * Method for declaring the constants required for the project
 */
@@ -49,6 +51,7 @@ public class TestConstants
 	public static final String CREDIT_SUCCESS = "Credit successful";
 	public static final String LESS_REWARD_POINTS = "Unable to Process Your Redemption";
 	public static final String YES = "Yes";
+	public static final int ZERO = 0;
 	
 	/**
 	 * Method for adding Financial Institution Name in Financial Institution Url
@@ -57,6 +60,15 @@ public class TestConstants
 	{
 		String financialInstitutionUrl = "https://qa.fisoc.com/"+financialInstitution+"/login.html";
 		return financialInstitutionUrl;
+	}
+	
+	/**
+	 * Method for Converting String to Integer.
+	 */
+	public int convertingStringToInteger(WebDriver driver,String points) {
+		
+		int pointsValue = Integer.parseInt(points);
+		return pointsValue;
 	}
 }
 

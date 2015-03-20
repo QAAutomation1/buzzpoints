@@ -8,12 +8,13 @@ package com.fisoc.admin.helpers;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import com.fisoc.constants.TestConstants;
 import com.fisoc.user.helpers.UserActivityPageTestHelper;
 import com.fisoc.user.helpers.UserLoginPageTestHelper;
@@ -23,10 +24,16 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 {
 	public static String adminLoginEmail;
 	public static String adminLoginPassword;
-	public static String creditPoints;
-	public static String creditDescription;
 	public static String financialInstitutionLoginEmail;
 	public static Boolean adminPageloginStatus;
+	public static String settlementDate;
+	public static String transactionDate;
+	public static String financialInstitutionAccount;
+	public static String amountInCents;
+	public static String transactionType;
+	public static String transactionDescription;
+	public static String howManyTransactions;
+	public static String transactionSave;
 	Set<String> allWindows;
 	static Iterator<String> it;
 	static String parent;
@@ -35,6 +42,7 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 	ExcelLib xllib = new ExcelLib();
 	UserLoginPageTestHelper userLogout = new UserLoginPageTestHelper();
 	UserActivityPageTestHelper activity = new UserActivityPageTestHelper();
+	AdminLoginPageTestHelper adminLoginLogout = new AdminLoginPageTestHelper();
 	private static Logger log = Logger.getLogger(CompleteeCaptiveLoyaltyCardTransactionTestHelper.class);
 	
 	/**
@@ -46,18 +54,17 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 	{
 		try
 		{
-			 AdminLoginPageTestHelper adminLogin = new AdminLoginPageTestHelper();
 			 rowCount= xllib.getRowCount("AdminLogin");
 			 for (int i = 1; i <= rowCount; i++) 
 			 {
 				adminLoginEmail = xllib.getExcelData("AdminLogin", i, 0);
 				adminLoginPassword = xllib.getExcelData("AdminLogin", i, 1); 
-				adminPageloginStatus = adminLogin.adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
+				adminPageloginStatus = adminLoginLogout.adminPageLoginActions(driver, adminLoginEmail, adminLoginPassword);
 				//Check whether admin login credentials valid or not
 				if(adminPageloginStatus == true)
 				{
-					loyaltyCardTransactionActions(driver);
-					adminLogin.adminPageLogoutActions(driver);
+					addNewTransactionActions(driver);
+					adminLoginLogout.adminPageLogoutActions(driver);
 				}
 			 }
 		}
@@ -68,22 +75,27 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 	}
 	
 	/**
-	 * Test Case for browsing all transactions
+	 * Test Case for add transactions
 	 * on correct data we can successfully Complete eCaptive Loyalty Card Transaction.
 	 * Input: WebDriver
 	 * Ouptu: Void
 	 * @throws InvalidFormatException 
 	 */
-	public void loyaltyCardTransactionActions(WebDriver driver) throws InvalidFormatException
+	public void addNewTransactionActions(WebDriver driver) throws InvalidFormatException
 	{
-		rowCount= xllib.getRowCount("CreditPoints");
+		rowCount= xllib.getRowCount("AddTransaction");
 		for (int i = 1; i <= rowCount; i++) 
 	   	{
 			try
 			{
-				financialInstitutionLoginEmail = xllib.getExcelData("CreditPoints", i, 0);
-				creditPoints=xllib.getExcelData("CreditPoints", i, 1);
-				creditDescription=xllib.getExcelData("CreditPoints", i, 2);
+				financialInstitutionLoginEmail = xllib.getExcelData("AddTransaction", i, 0);
+				settlementDate=xllib.getExcelData("AddTransaction", i, 1);
+				transactionDate=xllib.getExcelData("AddTransaction", i, 2);
+				financialInstitutionAccount=xllib.getExcelData("AddTransaction", i, 3);
+				amountInCents=xllib.getExcelData("AddTransaction", i, 4);
+				transactionType=xllib.getExcelData("AddTransaction", i, 5);
+				transactionDescription=xllib.getExcelData("AddTransaction", i, 6);
+				howManyTransactions=xllib.getExcelData("AddTransaction", i, 7);
 				
 				driver.findElement(By.id("module_btn_browse_all_lifeusers")).click();
 				log.info("Searching for User Account");
@@ -91,17 +103,35 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 				driver.findElement(By.name("emailfilter")).clear();
 				driver.findElement(By.name("emailfilter")).sendKeys(financialInstitutionLoginEmail);
 				driver.findElement(By.xpath("//i[@ class='icon-search']")).click();
+				Thread.sleep(3000);
 				driver.findElement(By.xpath("//button[text()='Details']")).click();
-				driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='points']")).clear();
-	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='points']")).sendKeys(creditPoints);
-	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='description']")).clear();
-	            driver.findElement(By.xpath("//div[@id='credit']/div[2]/input[@name='description']")).sendKeys(creditDescription);
-	            driver.findElement(By.xpath("//button[text()='Credit Points']")).click();
-	            
-	            creditAlertAction(driver);
-	            Thread.sleep(5000);
-	           // verifyActivityByWebUserView(driver);
-	           //userLogout.userLogoutPageActions(driver);
+				log.info("Adding new transaction...");
+				driver.findElement(By.name("settlementDate")).clear();
+				driver.findElement(By.name("settlementDate")).sendKeys(settlementDate);
+				driver.findElement(By.name("transactionDate")).clear();
+				driver.findElement(By.name("transactionDate")).sendKeys(transactionDate);
+				
+				WebElement fiAccountValue = driver.findElement(By.name("fiAccount"));
+				Select st1= new Select(fiAccountValue);
+				st1.selectByIndex(0);
+				
+				driver.findElement(By.name("amountInCents")).clear();
+				driver.findElement(By.name("amountInCents")).sendKeys(amountInCents);
+				
+				WebElement transactionTypeValue = driver.findElement(By.name("type"));
+				Select st2= new Select(transactionTypeValue);
+				st2.selectByVisibleText(transactionType);
+				
+				driver.findElement(By.xpath("//input[@value='Walmart']")).clear();
+				driver.findElement(By.xpath("//input[@value='Walmart']")).sendKeys(transactionDescription);
+				driver.findElement(By.name("howMany")).clear();
+				driver.findElement(By.name("howMany")).sendKeys(howManyTransactions);
+				driver.findElement(By.xpath("//button[text()='Add']")).click();
+				Thread.sleep(3000);
+				addTransactionAlertActions(driver);
+				Thread.sleep(3000);
+				driver.findElement(By.xpath("//div[@class='modal-dialog modal-lg']/div[@class='modal-content']/div[@class='modal-header']/button[@class='close']")).click();
+				//completeeCaptiveLoyaltyCardMailConfirmation(driver);
 	        }
 			catch(Exception e)
 			{
@@ -111,65 +141,21 @@ public class CompleteeCaptiveLoyaltyCardTransactionTestHelper
 	}
 	
 	/**
-	 * Method for Credit Points Alert Message
-	 * on correct data we can successfully Credit Points
+	 * Method for add Transaction Alert Message
+	 * on correct data we can successfully add transaction
 	 * Input: WebDriver
 	 * Output: Void
 	 * @throws InvalidFormatException 
 	 */
-	public void creditAlertAction(WebDriver driver) {
+	public void addTransactionAlertActions(WebDriver driver) {
+		
 		Alert alert = driver.switchTo().alert();
-		String creditSuccess = alert.getText();
+		String transactionSave = alert.getText();
 		alert.accept(); 
-		if(creditSuccess.equalsIgnoreCase(TestConstants.CREDIT_SUCCESS)){
-			log.info("Credit successfully");
+		if(transactionSave.equalsIgnoreCase(TestConstants.TRANSACTION_SAVED)){
+			log.info("Transaction successfully saved");
 		}else{
-			log.info("Credit unsuccessfully");
-		}		
-	}
-	
-	/**
-	 * Method for Verify Activity by Web User View.
-	 * on correct data we can successfully view User Activity.
-	 * Input: WebDriver
-	 * Output: Void
-	 * @throws InterruptedException 
-	 * @throws InvalidFormatException 
-	 */
-	public void verifyActivityByWebUserView(WebDriver driver) throws InterruptedException {
-		
-		driver.findElement(By.xpath("//button[contains(text(),'Web User View')]")).click();
-		log.info("clicked on Web User View");
-		Thread.sleep(8000);
-       
-        allWindows = driver.getWindowHandles();
-		it = allWindows.iterator();
-		parent = (String) it.next();
-		child = (String) it.next();
-		
-		driver.switchTo().window(child);
-		driver.findElement(By.xpath("//a[@href='#/activity']")).click();
-		log.info("Viewing User Recent Activities");
-		/*DateFormat dateformat = new SimpleDateFormat("dd");
-		Date date = new Date();
-		String dates = dateformat.format(date);
-		tommorrowDate= Integer.parseInt(dates)+1;*/
-			
-		/*driver.findElement(By.id("location")).clear();
-		driver.findElement(By.id("location")).sendKeys(location);
-		driver.findElement(By.id("locationGo")).click();*/
-		
-		//driver.findElement(By.xpath("//a[@href='#/activity']")).click();
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		Thread.sleep(5000);
-		driver.switchTo().window(parent);
-		/*driver.findElement(By.id("activity_searchTerms")).clear();
-		driver.findElement(By.id("activity_searchTerms")).sendKeys(searchActivity);
-		driver.findElement(By.id("activity_search")).click();
-		driver.findElement(By.id("from_date")).clear();
-		driver.findElement(By.id("from_date")).sendKeys(fromDate);
-		driver.findElement(By.id("to_date")).clear();
-		driver.findElement(By.id("to_date")).sendKeys(toDate);
-		driver.findElement(By.xpath("//a[@href='#"+tommorrowDate+"']")).click();*/
+			log.info("Transaction not saved");
+		}
 	}
 }
